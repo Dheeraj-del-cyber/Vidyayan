@@ -117,3 +117,7 @@ button:active{transform:scale(.97)}
 .translation-help{display:flex;align-items:flex-start;gap:12px;margin-top:14px;padding:16px 18px;background:#eaf1eb;border-radius:10px}.translation-help-icon{display:grid;place-items:center;width:31px;height:31px;flex:none;color:var(--teal);background:#d8eee6;border-radius:9px}.translation-help strong{display:block;font-size:12px;margin-bottom:4px}.translation-help p{margin:0;color:#718179;font-size:11px;line-height:1.5}
 @keyframes translation-reveal{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes spin{to{transform:rotate(360deg)}}
 @media (max-width: 680px){.translation-intro{display:block}.translation-note{margin-top:16px;width:max-content}.translation-card{padding:17px}.translation-card-head{display:block}.translation-status{margin-top:13px}.translation-workspace{grid-template-columns:1fr;gap:10px}.swap-button{margin:auto;transform:rotate(90deg)}.swap-button:hover{transform:rotate(270deg)}.translation-actions{display:block}.translation-actions .primary-button{width:100%}.translation-actions>span{display:block;margin-top:12px}.translation-pane textarea,.translation-output{height:130px}}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.register-panel{max-width:560px}
+.register-panel .login-form{margin-top:22px}
+@media(max-width:520px){.field-row{grid-template-columns:1fr}}

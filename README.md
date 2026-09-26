@@ -1,43 +1,68 @@
 # Vidyayan
 
-## Translation setup (LibreTranslate)
+A learning-continuity workspace for children of migrant families, with a
+real login/register system backed by a database.
 
-The "Change language" / "Translate a lesson" screen calls a real translation engine — [LibreTranslate](https://github.com/LibreTranslate/LibreTranslate) — through a small local proxy, so no cloud API key or billing is needed.
+## Project structure
 
-```text
-React frontend  →  local proxy (server/index.js)  →  LibreTranslate  →  translation
+```
+vidyayan/
+├── frontend/    React + Vite app (the UI)
+├── backend/     Express API — register, login, translation proxy
+└── database/    SQLite schema + the database file itself
 ```
 
-The frontend never calls LibreTranslate directly. That keeps things working after you deploy the site — visitors' browsers only ever talk to your proxy's URL, not to "localhost".
+The frontend never talks to the database directly — it calls the
+backend's API, and the backend is the only thing that touches the
+database. That's what "frontend / backend / database" means here.
 
-**1. Install and start LibreTranslate** (needs Python):
-
-```bash
-pip install libretranslate
-libretranslate
-```
-
-This starts a server at `http://localhost:5000`. The first run downloads language models, so give it a minute.
-
-**2. Install this project's dependencies** (adds the small `express`/`cors` proxy):
+## 1. Set up the database + backend
 
 ```bash
+cd backend
 npm install
-```
-
-**3. Start the proxy** (in its own terminal):
-
-```bash
-npm run server
-```
-
-This listens on `http://localhost:4000` and forwards requests to LibreTranslate.
-
-**4. Start the frontend as usual**:
-
-```bash
+cp .env.example .env
 npm run dev
 ```
 
-Open the Translation page and translate something — it now goes through LibreTranslate for real. If you ever move LibreTranslate elsewhere, set `LIBRETRANSLATE_URL` before starting the proxy, e.g. `LIBRETRANSLATE_URL=http://localhost:5000 npm run server`.
+This starts the API on `http://localhost:4000`. The very first time it
+runs, it creates `database/vidyayan.db` automatically using
+`database/schema.sql` — you don't need to create it by hand.
 
+## 2. Set up the frontend
+
+In a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+This starts the app on `http://localhost:5173` (Vite's default). Open
+that in your browser.
+
+## How login/register works
+
+- **Register** asks for: full name, phone number, password, re-entered
+  password (both with a show/hide eye button), native language,
+  previous state, current state, and the month + year the family
+  migrated.
+- **Login** asks for: phone number and password.
+- Passwords are hashed with bcrypt before they're stored — the database
+  never holds a plain-text password.
+- On success, the backend returns a login token (JWT) that the frontend
+  stores and sends with future requests, so the person stays signed in
+  across page reloads.
+- Every page in the app is protected: if you're not signed in, you're
+  sent to `/login`.
+
+## Notes
+
+- The translation feature (`Translate a lesson`) still works the same
+  way it did before — see the LibreTranslate setup, now proxied through
+  `backend/routes/translateRoutes.js` instead of the old `server/`
+  folder.
+- All the dashboard/curriculum/progress screens still use the mock data
+  in `frontend/src/data.js`, exactly as before — only login/register is
+  now backed by a real database.

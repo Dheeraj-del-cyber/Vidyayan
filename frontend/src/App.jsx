@@ -11,7 +11,9 @@ import Translation from './Translation';
 import { useLanguage, interfaceLanguages } from './i18n';
 import { indianStates } from './indianStates';
 import StudentDashboard from './StudentDashboard';
-import StudentLogin from './StudentLogin';
+import Login from './Login';
+import Register from './Register';
+import { useAuth } from './AuthContext';
 
 const navItems = [
   { key: 'Dashboard', to: '/', icon: LayoutDashboard },
@@ -38,9 +40,12 @@ function Sidebar({ onClose }) {
 function Header({ onMenu }) {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const initials = (user?.name || '').trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'VY';
   const currentKey = location.pathname === '/' ? 'Overview' : location.pathname === '/settings' ? 'Settings' : location.pathname.startsWith('/curriculum-gap') || location.pathname === '/gap-details' ? 'Curriculum gap' : location.pathname.startsWith('/learning') ? 'Learning' : location.pathname.startsWith('/translation') ? 'Translation' : navItems.find(item => item.to === location.pathname)?.key || 'Learning';
-  return <header className="topbar"><button className="icon-button mobile-menu" onClick={onMenu} aria-label="Open navigation"><Menu size={21} /></button><div className="breadcrumb"><span>{t('Workspace')}</span><span className="slash">/</span><strong>{t(currentKey)}</strong></div><div className="top-actions"><label className="interface-language"><Languages size={15} /><select aria-label="Interface language" value={language} onChange={event => setLanguage(event.target.value)}>{interfaceLanguages.map(option => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label><button className="icon-button" onClick={() => setNotificationsOpen(!notificationsOpen)} aria-label={t('Notifications')} aria-expanded={notificationsOpen}><Bell size={19} /><span className="notification-dot" /></button>{notificationsOpen && <div className="notification-popover"><strong>{t('Notifications')}</strong>{['Learning gap identified', 'You completed a bridge lesson', 'Your learning record was updated'].map((item, i) => <div className="notification-item" key={item}><span className={`notification-icon n-${i}`}><Bell size={14} /></span><span>{item}<small>{i + 1} hour{i ? 's' : ''} ago</small></span></div>)}</div>}<button className="profile" onClick={() => window.location.assign('/settings')} aria-label="Open student settings"><span className="avatar avatar-teal">RS</span><span className="profile-copy"><strong>Rahul Shetty</strong><small>Student</small></span><ChevronDown size={15} /></button></div></header>;
+  return <header className="topbar"><button className="icon-button mobile-menu" onClick={onMenu} aria-label="Open navigation"><Menu size={21} /></button><div className="breadcrumb"><span>{t('Workspace')}</span><span className="slash">/</span><strong>{t(currentKey)}</strong></div><div className="top-actions"><label className="interface-language"><Languages size={15} /><select aria-label="Interface language" value={language} onChange={event => setLanguage(event.target.value)}>{interfaceLanguages.map(option => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label><button className="icon-button" onClick={() => setNotificationsOpen(!notificationsOpen)} aria-label={t('Notifications')} aria-expanded={notificationsOpen}><Bell size={19} /><span className="notification-dot" /></button>{notificationsOpen && <div className="notification-popover"><strong>{t('Notifications')}</strong>{['Learning gap identified', 'You completed a bridge lesson', 'Your learning record was updated'].map((item, i) => <div className="notification-item" key={item}><span className={`notification-icon n-${i}`}><Bell size={14} /></span><span>{item}<small>{i + 1} hour{i ? 's' : ''} ago</small></span></div>)}</div>}<button className="profile" onClick={() => navigate('/settings')} aria-label="Open student settings"><span className="avatar avatar-teal">{initials}</span><span className="profile-copy"><strong>{user?.name || 'Student'}</strong><small>Student</small></span><ChevronDown size={15} /></button></div></header>;
 }
 
 function BottomNav() {
@@ -52,6 +57,11 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, loading } = useAuth();
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
+  useEffect(() => {
+    if (!loading && !user && !isAuthRoute) navigate('/login');
+  }, [loading, user, isAuthRoute, navigate]);
   useEffect(() => {
     const handleActivityMenu = event => {
       if (event.target.closest('.activity-panel .icon-button')) navigate('/migration-history');
@@ -61,7 +71,8 @@ function App() {
     document.addEventListener('click', handleActivityMenu);
     return () => document.removeEventListener('click', handleActivityMenu);
   }, [navigate]);
-  if (location.pathname === '/login') return <Routes><Route path="/login" element={<StudentLogin />} /></Routes>;
+  if (isAuthRoute) return <Routes><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /></Routes>;
+  if (loading || !user) return null;
   return <div className="app-shell"><div className={`sidebar-wrap ${menuOpen ? 'open' : ''}`}><Sidebar onClose={() => setMenuOpen(false)} /></div>{menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}<div className="main-shell"><Header onMenu={() => setMenuOpen(true)} /><main className="main-content"><Routes><Route path="/" element={<StudentDashboard />} /><Route path="/curriculum-gap" element={<CurriculumGap />} /><Route path="/gap-details" element={<GapDetails />} /><Route path="/learning" element={<Learning />} /><Route path="/learning/lesson" element={<Lesson />} /><Route path="/translation" element={<Translation />} /><Route path="/progress" element={<Progress />} /><Route path="/migration-history" element={<MigrationHistory />} /><Route path="/settings" element={<StudentSettings />} /></Routes></main><BottomNav /></div></div>;
 }
 
@@ -95,6 +106,11 @@ function Lesson() { const [playing, setPlaying] = useState(false); const [answer
 
 function Progress() { return <><PageIntro eyebrow="A record that remembers" title="Progress" content="See how far each child has come, and what comes next." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export record</button>} /><div className="overall-progress"><div><span className="section-kicker">Rahul Shetty · Class 5</span><h2>Overall learning progress</h2><p>8 of 12 chapters completed across 4 subjects.</p></div><div className="big-progress"><strong>68<span>%</span></strong><ProgressBar value={68} color="coral" /></div></div><div className="subject-grid">{subjects.map(subject => <div className="subject-card" key={subject.name}><div className="subject-card-top"><span className={`subject-icon ${subject.color}-bg`}><BookOpen size={18} /></span><span className="subject-percentage">{subject.progress}%</span></div><h3>{subject.name}</h3><p>{subject.completed} of {subject.total} chapters completed</p><ProgressBar value={subject.progress} color={subject.color} /></div>)}</div><section className="panel record-panel"><div className="panel-heading"><div><span className="section-kicker">Persistent learning record</span><h2>What stays with Rahul</h2></div><button className="text-button" onClick={() => window.print()}>View full record <ArrowRight size={15} /></button></div><div className="record-grid"><div><span>Completed chapters</span><strong>18</strong></div><div><span>Bridged chapters</span><strong>4</strong></div><div><span>Pending gaps</span><strong className="highlight-number">2</strong></div><div><span>Last updated</span><strong>Today</strong></div></div></section></>; }
 function MigrationHistory() { return <><PageIntro eyebrow="Nothing gets lost in the move" title="Migration history" content="A continuous view of Rahul's learning journey across places and school years." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export history</button>} /><div className="history-header"><div className="history-stat"><span className="stat-icon coral"><RouteIcon size={19} /></span><div><span>Learning record</span><strong>Carried forward</strong></div></div><div className="history-route"><span>Karnataka</span><ArrowRight size={16} /><span>Maharashtra</span><ArrowRight size={16} /><span className="current-location">Current</span></div></div><div className="history-timeline">{timeline.map((item, i) => <div className={`history-item ${item.active ? 'active' : ''}`} key={item.date}><div className="history-marker"><span>{i + 1}</span></div><div className="history-card"><span className="section-kicker">{item.date}</span><h2>{item.title}</h2><p>{item.text}</p>{item.active && <Status>Current location</Status>}</div></div>)}</div></>; }
-function StudentSettings() { const [language, setLanguage] = useState('Kannada'); return <><PageIntro eyebrow="Your learning preferences" title="Settings" content="Choose how you want your lessons and learning record to feel." action={<button className="quiet-button" onClick={() => window.location.assign('/login')}>Sign out</button>} /><div className="settings-card"><div><h2>Student learning profile</h2><p>Rahul Shetty · Class 5 · Learning record carried forward</p></div><button className="secondary-button" onClick={() => window.location.assign('/progress')}>View progress</button></div><div className="settings-card"><div><h2>Default learning language</h2><p>New bridge lessons will open in {language}.</p></div><label className="language-select"><Languages size={15} /><select value={language} onChange={event => setLanguage(event.target.value)}><option>Kannada</option><option>Hindi</option><option>Marathi</option><option>English</option></select><ChevronDown size={15} /></label></div></>; }
+function StudentSettings() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [language, setLanguage] = useState('Kannada');
+  const handleSignOut = () => { logout(); navigate('/login'); };
+  return <><PageIntro eyebrow="Your learning preferences" title="Settings" content="Choose how you want your lessons and learning record to feel." action={<button className="quiet-button" onClick={handleSignOut}>Sign out</button>} /><div className="settings-card"><div><h2>Student learning profile</h2><p>{user?.name} · {user?.native_language} · {user?.previous_state} → {user?.current_state}</p></div><button className="secondary-button" onClick={() => navigate('/progress')}>View progress</button></div><div className="settings-card"><div><h2>Default learning language</h2><p>New bridge lessons will open in {language}.</p></div><label className="language-select"><Languages size={15} /><select value={language} onChange={event => setLanguage(event.target.value)}><option>Kannada</option><option>Hindi</option><option>Marathi</option><option>English</option></select><ChevronDown size={15} /></label></div></>; }
 
 export default App;
