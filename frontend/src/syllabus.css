@@ -1,0 +1,51 @@
+.syllabus-page{max-width:1120px;margin:0 auto;padding:8px 0 48px;color:#26342e}
+.syllabus-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:25px}
+.syllabus-heading h1{margin:7px 0 8px;font-size:30px;line-height:1.15}
+.syllabus-heading p{margin:0;color:#68766f;font-size:14px}
+.syllabus-count{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #e1e7e2;border-radius:6px;color:#4e6258;background:#fff;font-size:12px;font-weight:700;white-space:nowrap}
+.syllabus-search{display:grid;grid-template-columns:minmax(135px,1fr) 24px minmax(135px,1fr) minmax(125px,.72fr) minmax(160px,1fr) auto;align-items:end;gap:12px;padding:18px 0;border-top:1px solid #dfe6e0;border-bottom:1px solid #dfe6e0}
+.syllabus-search label{display:grid;gap:7px;min-width:0}
+.syllabus-search label>span{font-size:11px;font-weight:700;color:#596a61}
+.syllabus-search select{width:100%;height:42px;padding:0 11px;border:1px solid #dfe5de;border-radius:4px;background:#fff;color:#26342e;font:inherit;font-size:13px}
+.syllabus-search .primary-button{height:42px;justify-content:center;white-space:nowrap}
+.syllabus-direction{justify-self:center;margin-bottom:11px;color:#78877f}
+.syllabus-note{margin:18px 0 23px;padding:11px 13px;border-left:3px solid #d6a443;background:#f7f7f2;color:#56645d;font-size:12px;line-height:1.5}
+.syllabus-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.syllabus-result{min-width:0}
+.syllabus-result-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:13px;border-bottom:1px solid #dfe6e0}
+.syllabus-result-heading h2{margin:4px 0 0;font-size:20px;line-height:1.25}
+.syllabus-result-count{color:#697870;font-size:12px;white-space:nowrap}
+.syllabus-document-list{list-style:none;margin:0;padding:0}
+.syllabus-document{display:grid;grid-template-columns:22px minmax(0,1fr) 34px;align-items:center;gap:11px;padding:14px 0;border-bottom:1px solid #e8ece8;color:#53645a}
+.syllabus-document-copy{display:grid;gap:5px;min-width:0}
+.syllabus-document-copy strong{overflow-wrap:anywhere;color:#293831;font-size:13px;font-weight:650;line-height:1.4}
+.syllabus-document-copy span{color:#77837c;font-size:11px;line-height:1.4}
+.syllabus-document>a{display:grid;place-items:center;width:34px;height:34px;border:1px solid #dfe5de;border-radius:4px;color:#3b6553;background:#fff}
+.syllabus-document>a:hover{background:#eef4ef}
+.syllabus-empty{margin:0;padding:18px 0;color:#718077;font-size:13px;line-height:1.5}
+.syllabus-error{margin-top:15px;color:#a33d35;font-size:13px}
+.syllabus-analyze-action{display:flex;justify-content:flex-end;margin-top:19px}
+.syllabus-gap-report{margin-top:28px;padding-top:22px;border-top:2px solid #dfe6e0}
+.syllabus-gap-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:18px}
+.syllabus-gap-heading h2{margin:6px 0;font-size:24px;line-height:1.2}
+.syllabus-gap-heading p{margin:0;color:#697870;font-size:12px;overflow-wrap:anywhere}
+.syllabus-gap-total{display:inline-flex;align-items:center;gap:7px;color:#965d14;font-size:13px;font-weight:700;white-space:nowrap}
+.syllabus-alignment-list{border-top:1px solid #dfe6e0}
+.syllabus-alignment{display:grid;grid-template-columns:150px minmax(0,1fr);gap:15px;padding:13px 0;border-bottom:1px solid #e8ece8}
+.syllabus-alignment-status{display:inline-flex;align-items:flex-start;gap:6px;font-size:11px;font-weight:700;line-height:1.4}
+.syllabus-alignment-status.matched{color:#356b4d}
+.syllabus-alignment-status.partial{color:#94600f}
+.syllabus-alignment-status.review{color:#596a75}
+.syllabus-alignment-copy{display:grid;gap:4px;min-width:0}
+.syllabus-alignment-copy strong{color:#293831;font-size:13px;line-height:1.4}
+.syllabus-alignment-copy>span{color:#486253;font-size:12px;line-height:1.4}
+.syllabus-alignment-copy small{color:#77837c;font-size:11px;line-height:1.5}
+.syllabus-potential-gaps{margin-top:22px}
+.syllabus-potential-gaps h3{margin:0 0 6px;font-size:16px}
+.syllabus-potential-gaps p{margin:0 0 12px;color:#697870;font-size:12px;line-height:1.5}
+.syllabus-potential-gaps ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;list-style:none;margin:0;padding:0}
+.syllabus-potential-gaps li{display:flex;align-items:center;gap:8px;min-width:0;padding:10px 0;border-bottom:1px solid #e8ece8;color:#754c18;font-size:12px;line-height:1.4}
+.syllabus-potential-gaps li svg{flex:none}
+.syllabus-review-note{margin-top:17px;padding:12px 13px;border-left:3px solid #d6a443;background:#f7f7f2;color:#59675f;font-size:11px;line-height:1.6}
+@media(max-width:800px){.syllabus-search{grid-template-columns:1fr 24px 1fr}.syllabus-search label:nth-of-type(3),.syllabus-search label:nth-of-type(4){grid-row:2}.syllabus-search .primary-button{grid-column:1/-1}.syllabus-results{gap:20px}}
+@media(max-width:600px){.syllabus-page{padding-top:4px}.syllabus-heading{align-items:flex-start;flex-direction:column;gap:14px;margin-bottom:19px}.syllabus-heading h1{font-size:26px}.syllabus-search{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);gap:10px}.syllabus-search label:nth-of-type(3),.syllabus-search label:nth-of-type(4){grid-column:span 3;grid-row:auto}.syllabus-search .primary-button{grid-column:span 3}.syllabus-results{grid-template-columns:1fr;gap:26px}.syllabus-gap-heading{align-items:flex-start;flex-direction:column}.syllabus-alignment{grid-template-columns:112px minmax(0,1fr);gap:10px}.syllabus-potential-gaps ul{grid-template-columns:1fr}}

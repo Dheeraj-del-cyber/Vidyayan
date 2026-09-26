@@ -2,7 +2,7 @@
 // .env file inside /frontend if the backend runs somewhere other than
 // http://localhost:4000.
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 async function request(path, options = {}) {
   let response;
@@ -42,4 +42,13 @@ export function apiUpdateProfile(token, payload) {
     headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload),
   });
+}
+
+export function apiSyllabi() {
+  return request('/api/syllabi');
+}
+
+export function apiCompareSyllabi({ homeState, destinationState, grade, subject }) {
+  const params = new URLSearchParams({ homeState, destinationState, grade, subject });
+  return request(`/api/syllabi/compare?${params.toString()}`);
 }
