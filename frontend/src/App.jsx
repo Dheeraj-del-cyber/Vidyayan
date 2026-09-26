@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowRight, Bell, BookOpen, Check, ChevronDown, CircleHelp, FileText, Gauge,
-  Headphones, Home, Languages, LayoutDashboard, Library, Menu, MoreHorizontal,
+  Headphones, Home, Languages, LayoutDashboard, Library, LogOut, Menu, MoreHorizontal,
   Plus, Search, Settings, Sparkles, Target, UserRound, Users, X, MapPinned,
   Play, Pause, Download, CheckCircle2, AlertTriangle, Clock3, Route as RouteIcon,
 } from 'lucide-react';
@@ -11,6 +11,7 @@ import Translation from './Translation';
 import { useLanguage, interfaceLanguages } from './i18n';
 import { indianStates } from './indianStates';
 import StudentDashboard from './StudentDashboard';
+import Profile from './Profile';
 import Login from './Login';
 import Register from './Register';
 import { useAuth } from './AuthContext';
@@ -39,13 +40,18 @@ function Sidebar({ onClose }) {
 
 function Header({ onMenu }) {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const initials = (user?.name || '').trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'VY';
-  const currentKey = location.pathname === '/' ? 'Overview' : location.pathname === '/settings' ? 'Settings' : location.pathname.startsWith('/curriculum-gap') || location.pathname === '/gap-details' ? 'Curriculum gap' : location.pathname.startsWith('/learning') ? 'Learning' : location.pathname.startsWith('/translation') ? 'Translation' : navItems.find(item => item.to === location.pathname)?.key || 'Learning';
-  return <header className="topbar"><button className="icon-button mobile-menu" onClick={onMenu} aria-label="Open navigation"><Menu size={21} /></button><div className="breadcrumb"><span>{t('Workspace')}</span><span className="slash">/</span><strong>{t(currentKey)}</strong></div><div className="top-actions"><label className="interface-language"><Languages size={15} /><select aria-label="Interface language" value={language} onChange={event => setLanguage(event.target.value)}>{interfaceLanguages.map(option => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label><button className="icon-button" onClick={() => setNotificationsOpen(!notificationsOpen)} aria-label={t('Notifications')} aria-expanded={notificationsOpen}><Bell size={19} /><span className="notification-dot" /></button>{notificationsOpen && <div className="notification-popover"><strong>{t('Notifications')}</strong>{['Learning gap identified', 'You completed a bridge lesson', 'Your learning record was updated'].map((item, i) => <div className="notification-item" key={item}><span className={`notification-icon n-${i}`}><Bell size={14} /></span><span>{item}<small>{i + 1} hour{i ? 's' : ''} ago</small></span></div>)}</div>}<button className="profile" onClick={() => navigate('/settings')} aria-label="Open student settings"><span className="avatar avatar-teal">{initials}</span><span className="profile-copy"><strong>{user?.name || 'Student'}</strong><small>Student</small></span><ChevronDown size={15} /></button></div></header>;
+  const toggleNotifications = () => { setProfileMenuOpen(false); setNotificationsOpen(open => !open); };
+  const toggleProfileMenu = () => { setNotificationsOpen(false); setProfileMenuOpen(open => !open); };
+  const goTo = path => { setProfileMenuOpen(false); navigate(path); };
+  const handleSignOut = () => { setProfileMenuOpen(false); logout(); navigate('/login'); };
+  const currentKey = location.pathname === '/' ? 'Overview' : location.pathname === '/settings' ? 'Settings' : location.pathname === '/profile' ? 'Profile' : location.pathname.startsWith('/curriculum-gap') || location.pathname === '/gap-details' ? 'Curriculum gap' : location.pathname.startsWith('/learning') ? 'Learning' : location.pathname.startsWith('/translation') ? 'Translation' : navItems.find(item => item.to === location.pathname)?.key || 'Learning';
+  return <header className="topbar"><button className="icon-button mobile-menu" onClick={onMenu} aria-label="Open navigation"><Menu size={21} /></button><div className="breadcrumb"><span>{t('Workspace')}</span><span className="slash">/</span><strong>{t(currentKey)}</strong></div><div className="top-actions"><label className="interface-language"><Languages size={15} /><select aria-label="Interface language" value={language} onChange={event => setLanguage(event.target.value)}>{interfaceLanguages.map(option => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label><button className="icon-button" onClick={() => toggleNotifications()} aria-label={t('Notifications')} aria-expanded={notificationsOpen}><Bell size={19} /><span className="notification-dot" /></button>{notificationsOpen && <div className="notification-popover"><strong>{t('Notifications')}</strong>{['Learning gap identified', 'You completed a bridge lesson', 'Your learning record was updated'].map((item, i) => <div className="notification-item" key={item}><span className={`notification-icon n-${i}`}><Bell size={14} /></span><span>{item}<small>{i + 1} hour{i ? 's' : ''} ago</small></span></div>)}</div>}<button className="profile" onClick={toggleProfileMenu} aria-haspopup="true" aria-expanded={profileMenuOpen} aria-label="Open profile menu">{user?.avatar ? <img src={user.avatar} alt="" className="avatar avatar-photo" /> : <span className="avatar avatar-teal">{initials}</span>}<span className="profile-copy"><strong>{user?.name || 'Student'}</strong><small>Student</small></span><ChevronDown size={15} /></button>{profileMenuOpen && <div className="profile-menu"><button onClick={() => goTo('/profile')}><UserRound size={15} /> View profile</button><button onClick={() => goTo('/settings')}><Settings size={15} /> Settings</button><div className="profile-menu-divider" /><button className="danger" onClick={handleSignOut}><LogOut size={15} /> Sign out</button></div>}</div></header>;
 }
 
 function BottomNav() {
@@ -73,7 +79,7 @@ function App() {
   }, [navigate]);
   if (isAuthRoute) return <Routes><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /></Routes>;
   if (loading || !user) return null;
-  return <div className="app-shell"><div className={`sidebar-wrap ${menuOpen ? 'open' : ''}`}><Sidebar onClose={() => setMenuOpen(false)} /></div>{menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}<div className="main-shell"><Header onMenu={() => setMenuOpen(true)} /><main className="main-content"><Routes><Route path="/" element={<StudentDashboard />} /><Route path="/curriculum-gap" element={<CurriculumGap />} /><Route path="/gap-details" element={<GapDetails />} /><Route path="/learning" element={<Learning />} /><Route path="/learning/lesson" element={<Lesson />} /><Route path="/translation" element={<Translation />} /><Route path="/progress" element={<Progress />} /><Route path="/migration-history" element={<MigrationHistory />} /><Route path="/settings" element={<StudentSettings />} /></Routes></main><BottomNav /></div></div>;
+  return <div className="app-shell"><div className={`sidebar-wrap ${menuOpen ? 'open' : ''}`}><Sidebar onClose={() => setMenuOpen(false)} /></div>{menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}<div className="main-shell"><Header onMenu={() => setMenuOpen(true)} /><main className="main-content"><Routes><Route path="/" element={<StudentDashboard />} /><Route path="/profile" element={<Profile />} /><Route path="/curriculum-gap" element={<CurriculumGap />} /><Route path="/gap-details" element={<GapDetails />} /><Route path="/learning" element={<Learning />} /><Route path="/learning/lesson" element={<Lesson />} /><Route path="/translation" element={<Translation />} /><Route path="/progress" element={<Progress />} /><Route path="/migration-history" element={<MigrationHistory />} /><Route path="/settings" element={<StudentSettings />} /></Routes></main><BottomNav /></div></div>;
 }
 
 function PageIntro({ eyebrow, title, children: content, action }) { const { t } = useLanguage(); return <div className="page-intro"><div><div className="eyebrow">{t(eyebrow)}</div><h1>{t(title)}</h1>{content && <p>{t(content)}</p>}</div>{action}</div>; }
@@ -111,6 +117,6 @@ function StudentSettings() {
   const { user, logout } = useAuth();
   const [language, setLanguage] = useState('Kannada');
   const handleSignOut = () => { logout(); navigate('/login'); };
-  return <><PageIntro eyebrow="Your learning preferences" title="Settings" content="Choose how you want your lessons and learning record to feel." action={<button className="quiet-button" onClick={handleSignOut}>Sign out</button>} /><div className="settings-card"><div><h2>Student learning profile</h2><p>{user?.name} · {user?.native_language} · {user?.previous_state} → {user?.current_state}</p></div><button className="secondary-button" onClick={() => navigate('/progress')}>View progress</button></div><div className="settings-card"><div><h2>Default learning language</h2><p>New bridge lessons will open in {language}.</p></div><label className="language-select"><Languages size={15} /><select value={language} onChange={event => setLanguage(event.target.value)}><option>Kannada</option><option>Hindi</option><option>Marathi</option><option>English</option></select><ChevronDown size={15} /></label></div></>; }
+  return <><PageIntro eyebrow="Your learning preferences" title="Settings" content="Choose how you want your lessons and learning record to feel." action={<button className="quiet-button" onClick={handleSignOut}>Sign out</button>} /><div className="settings-card"><div className="settings-card-identity">{user?.avatar ? <img src={user.avatar} alt="" className="avatar avatar-photo" /> : <span className="avatar avatar-teal">{(user?.name || '').trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'VY'}</span>}<div><h2>Student learning profile</h2><p>{user?.name} · {user?.native_language} · {user?.previous_state} → {user?.current_state}</p></div></div><div className="settings-card-actions"><button className="secondary-button" onClick={() => navigate('/profile')}>Edit profile</button><button className="secondary-button" onClick={() => navigate('/progress')}>View progress</button></div></div><div className="settings-card"><div><h2>Default learning language</h2><p>New bridge lessons will open in {language}.</p></div><label className="language-select"><Languages size={15} /><select value={language} onChange={event => setLanguage(event.target.value)}><option>Kannada</option><option>Hindi</option><option>Marathi</option><option>English</option></select><ChevronDown size={15} /></label></div></>; }
 
 export default App;

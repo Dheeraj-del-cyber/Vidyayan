@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   current_state     TEXT NOT NULL,
   migrated_month    TEXT NOT NULL,
   migrated_year     INTEGER NOT NULL,
+  avatar            TEXT,
   created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

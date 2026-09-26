@@ -121,3 +121,49 @@ button:active{transform:scale(.97)}
 .register-panel{max-width:560px}
 .register-panel .login-form{margin-top:22px}
 @media(max-width:520px){.field-row{grid-template-columns:1fr}}
+
+/* Rounder, friendlier login & register fields (was a plain sharp-cornered box). */
+.login-page .login-input{height:48px;padding:0 15px;border-radius:14px;background:#fcfdfb;border:1px solid #e1e7de;box-shadow:0 1px 2px rgba(36,50,47,.03);transition:border-color .2s ease,box-shadow .2s ease,background-color .2s ease}
+.login-page .login-input svg:first-child{color:#7ea395;flex:none}
+.login-page .login-input input{font-size:12.5px}
+.login-page .login-input:focus-within{border-color:#a9cfc0;background:#fff;box-shadow:0 0 0 3px rgba(79,155,143,.12)}
+.login-page .select-wrap select{width:100%;height:48px;padding:0 40px 0 15px;border-radius:14px;background:#fcfdfb;border:1px solid #e1e7de;color:var(--ink);font-size:12.5px;outline:0;box-shadow:0 1px 2px rgba(36,50,47,.03);transition:border-color .2s ease,box-shadow .2s ease,background-color .2s ease}
+.login-page .select-wrap select:hover{border-color:#cddbd2}
+.login-page .select-wrap select:focus{border-color:#a9cfc0;background:#fff;box-shadow:0 0 0 3px rgba(79,155,143,.12)}
+.login-page .select-wrap svg{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#87958d;pointer-events:none}
+.login-page .primary-button.login-submit{height:48px;border-radius:14px}
+.login-page .login-error{border-radius:10px;padding:11px 13px}
+.login-page .password-toggle{border-radius:50%}
+
+/* Profile page: avatar with an overlaid camera button, plus a locked phone field. */
+.profile-avatar-section{display:flex;align-items:center;gap:18px}
+.profile-avatar-wrap{position:relative;flex:none}
+.profile-avatar-img{display:block;width:96px;height:96px;border-radius:50%;object-fit:cover;background:#eef2ee}
+.avatar-xl{width:96px;height:96px;border-radius:50%;font-size:26px}
+.avatar-camera-button{position:absolute;right:-2px;bottom:-2px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;border:3px solid var(--paper);box-shadow:0 3px 8px rgba(36,50,47,.22);transition:transform .2s ease,background-color .2s ease}
+.avatar-camera-button:hover{background:#344843;transform:scale(1.06)}
+.avatar-camera-button:active{transform:scale(.94)}
+.profile-avatar-copy{display:grid;gap:4px}
+.profile-avatar-copy strong{font-size:16px}
+.profile-avatar-copy span{font-size:12px;color:var(--muted)}
+.profile-avatar-copy .text-button{justify-self:start;padding:0;font-size:11px}
+.avatar-photo{object-fit:cover}
+.input-locked{background:#f2f4f1!important;cursor:not-allowed}
+.input-locked svg{color:#9aa7a0!important}
+.input-locked input{color:#8b978f;cursor:not-allowed}
+.field-note{color:#9aa7a0;font-size:10px;margin-top:-2px}
+.profile-success{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--teal-soft);border:1px solid #cbe6dd;color:#2f6d61;border-radius:8px;font-size:11px}
+.settings-card-identity{display:flex;align-items:center;gap:13px}
+.settings-card-actions{display:flex;gap:8px}
+.profile-menu{position:absolute;z-index:10;right:0;top:56px;width:200px;padding:7px;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow)}
+.profile-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:8px;font-size:12px;font-weight:600;color:var(--ink);text-align:left;background:transparent}
+.profile-menu button:hover{background:#f2f5f1}
+.profile-menu button.danger{color:#bd624d}
+.profile-menu button.danger:hover{background:var(--coral-soft)}
+.profile-menu-divider{height:1px;background:#f0f2ee;margin:6px 4px}
+@media(max-width:520px){
+  .profile-avatar-section{flex-wrap:wrap}
+  .settings-card{flex-wrap:wrap;gap:12px}
+  .settings-card-actions{width:100%}
+  .settings-card-actions .secondary-button{flex:1}
+}

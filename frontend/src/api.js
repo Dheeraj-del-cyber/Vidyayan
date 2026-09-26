@@ -35,3 +35,11 @@ export function apiLogin(payload) {
 export function apiMe(token) {
   return request('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
 }
+
+export function apiUpdateProfile(token, payload) {
+  return request('/api/auth/me', {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload),
+  });
+}

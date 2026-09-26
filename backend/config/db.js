@@ -25,5 +25,13 @@ export const db = new DatabaseSync(DATABASE_FILE);
 const schema = fs.readFileSync(SCHEMA_FILE, 'utf-8');
 db.exec(schema);
 
+// Databases created before the "avatar" column existed won't have it yet
+// (CREATE TABLE IF NOT EXISTS above only runs on a brand-new file), so add
+// it here if it's missing.
+const columns = db.prepare('PRAGMA table_info(users)').all();
+if (!columns.some(column => column.name === 'avatar')) {
+  db.exec('ALTER TABLE users ADD COLUMN avatar TEXT');
+}
+
 export default db;
 

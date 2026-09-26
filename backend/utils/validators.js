@@ -29,6 +29,28 @@ export function validateRegistration(body) {
   return errors;
 }
 
+// Phone number is deliberately left out: it's how a person signs in, so it
+// isn't editable from the profile screen.
+export function validateProfileUpdate(body) {
+  const errors = [];
+  const {
+    name, nativeLanguage, previousState, currentState,
+    migratedMonth, migratedYear, avatar,
+  } = body || {};
+
+  if (!name || !name.trim()) errors.push('Name is required.');
+  if (!nativeLanguage) errors.push('Native language is required.');
+  if (!previousState) errors.push('Previous state is required.');
+  if (!currentState) errors.push('Current state is required.');
+  if (!migratedMonth) errors.push('Migrated month is required.');
+  if (!migratedYear || Number.isNaN(Number(migratedYear))) errors.push('Migrated year is required.');
+  if (avatar && typeof avatar === 'string' && avatar.length > 4_000_000) {
+    errors.push('That photo is too large. Try a smaller image.');
+  }
+
+  return errors;
+}
+
 export function validateLogin(body) {
   const errors = [];
   const { phone, password } = body || {};
