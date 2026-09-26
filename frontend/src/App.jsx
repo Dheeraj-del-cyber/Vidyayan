@@ -11,6 +11,9 @@ import Translation from './Translation';
 import { useLanguage, interfaceLanguages } from './i18n';
 import { indianStates } from './indianStates';
 import StudentDashboard from './StudentDashboard';
+import AddStudent from './AddStudent';
+import StudentAnalysis from './StudentAnalysis';
+import StudyRoutine from './StudyRoutine';
 import Profile from './Profile';
 import Login from './Login';
 import Register from './Register';
@@ -79,7 +82,7 @@ function App() {
   }, [navigate]);
   if (isAuthRoute) return <Routes><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /></Routes>;
   if (loading || !user) return null;
-  return <div className="app-shell"><div className={`sidebar-wrap ${menuOpen ? 'open' : ''}`}><Sidebar onClose={() => setMenuOpen(false)} /></div>{menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}<div className="main-shell"><Header onMenu={() => setMenuOpen(true)} /><main className="main-content"><Routes><Route path="/" element={<StudentDashboard />} /><Route path="/profile" element={<Profile />} /><Route path="/curriculum-gap" element={<CurriculumGap />} /><Route path="/gap-details" element={<GapDetails />} /><Route path="/learning" element={<Learning />} /><Route path="/learning/lesson" element={<Lesson />} /><Route path="/translation" element={<Translation />} /><Route path="/progress" element={<Progress />} /><Route path="/migration-history" element={<MigrationHistory />} /><Route path="/settings" element={<StudentSettings />} /></Routes></main><BottomNav /></div></div>;
+  return <div className="app-shell"><div className={`sidebar-wrap ${menuOpen ? 'open' : ''}`}><Sidebar onClose={() => setMenuOpen(false)} /></div>{menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}<div className="main-shell"><Header onMenu={() => setMenuOpen(true)} /><main className="main-content"><Routes><Route path="/" element={<StudentDashboard />} /><Route path="/add-student" element={<AddStudent />} /><Route path="/students/analysis" element={<StudentAnalysis />} /><Route path="/students/study-routine" element={<StudyRoutine />} /><Route path="/profile" element={<Profile />} /><Route path="/curriculum-gap" element={<CurriculumGap />} /><Route path="/gap-details" element={<GapDetails />} /><Route path="/learning" element={<Learning />} /><Route path="/learning/lesson" element={<Lesson />} /><Route path="/translation" element={<Translation />} /><Route path="/progress" element={<Progress />} /><Route path="/migration-history" element={<MigrationHistory />} /><Route path="/settings" element={<StudentSettings />} /></Routes></main><BottomNav /></div></div>;
 }
 
 function PageIntro({ eyebrow, title, children: content, action }) { const { t } = useLanguage(); return <div className="page-intro"><div><div className="eyebrow">{t(eyebrow)}</div><h1>{t(title)}</h1>{content && <p>{t(content)}</p>}</div>{action}</div>; }
