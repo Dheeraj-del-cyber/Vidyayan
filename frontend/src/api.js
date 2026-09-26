@@ -43,11 +43,3 @@ export function apiUpdateProfile(token, payload) {
     body: JSON.stringify(payload),
   });
 }
-
-export function apiChangePassword(token, payload) {
-  return request('/api/auth/me/password', {
-    method: 'PATCH',
-    headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify(payload),
-  });
-}

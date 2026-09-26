@@ -21,8 +21,8 @@ export function validateRegistration(body) {
 }
 
 // Phone number is deliberately left out: it's how a person signs in, so it
-// isn't editable from the profile screen. Password isn't handled here
-// either - that goes through validatePasswordChange below.
+// isn't editable from the profile screen. Password is deliberately left out
+// too - there's no change-password flow on the profile screen at all.
 export function validateProfileUpdate(body) {
   const errors = [];
   const { name } = body || {};
@@ -38,17 +38,6 @@ export function validateLogin(body) {
 
   if (!phone || !isValidPhone(phone)) errors.push('Enter a valid phone number.');
   if (!password) errors.push('Password is required.');
-
-  return errors;
-}
-
-export function validatePasswordChange(body) {
-  const errors = [];
-  const { currentPassword, newPassword, confirmNewPassword } = body || {};
-
-  if (!currentPassword) errors.push('Enter your current password.');
-  if (!newPassword || newPassword.length < 6) errors.push('New password must be at least 6 characters.');
-  if (newPassword !== confirmNewPassword) errors.push('New password and re-entered password do not match.');
 
   return errors;
 }
