@@ -1,81 +1,146 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { translateText } from './translationService';
 
+// Only languages LibreTranslate actually has loaded (see README: --load-only en,hi,kn).
 export const interfaceLanguages = [
   { value: 'en', label: 'English' },
   { value: 'hi', label: 'Hindi' },
   { value: 'kn', label: 'Kannada' },
-  { value: 'mr', label: 'Marathi' },
-  { value: 'ta', label: 'Tamil' },
-  { value: 'te', label: 'Telugu' },
 ];
 
-const copy = {
-  en: {
-    Dashboard: 'Dashboard', Children: 'Children', 'Curriculum gap': 'Curriculum gap', Learning: 'Learning', Translation: 'Translation', Progress: 'Progress', 'Migration history': 'Migration history', Settings: 'Settings', Workspace: 'Workspace', Overview: 'Overview', 'Good morning, Anita': 'Good morning, Anita', 'Add child': 'Add child', Notifications: 'Notifications', Coordinator: 'Coordinator', 'Open coordinator settings': 'Open coordinator settings',
-  },
-  hi: {
-    Dashboard: 'डैशबोर्ड', Children: 'बच्चे', 'Curriculum gap': 'पाठ्यक्रम अंतर', Learning: 'सीखना', Translation: 'अनुवाद', Progress: 'प्रगति', 'Migration history': 'स्थानांतरण इतिहास', Settings: 'सेटिंग्स', Workspace: 'कार्यस्थल', Overview: 'अवलोकन', 'Good morning, Anita': 'सुप्रभात, अनीता', 'Add child': 'बच्चा जोड़ें', Notifications: 'सूचनाएं', Coordinator: 'समन्वयक', 'Open coordinator settings': 'समन्वयक सेटिंग्स खोलें',
-  },
-  kn: {
-    Dashboard: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್', Children: 'ಮಕ್ಕಳು', 'Curriculum gap': 'ಪಠ್ಯಕ್ರಮ ಅಂತರ', Learning: 'ಕಲಿಕೆ', Translation: 'ಅನುವಾದ', Progress: 'ಪ್ರಗತಿ', 'Migration history': 'ವಲಸೆ ಇತಿಹಾಸ', Settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು', Workspace: 'ಕಾರ್ಯಸ್ಥಳ', Overview: 'ಅವಲೋಕನ', 'Good morning, Anita': 'ಶುಭೋದಯ, ಅನಿತಾ', 'Add child': 'ಮಗುವನ್ನು ಸೇರಿಸಿ', Notifications: 'ಅಧಿಸೂಚನೆಗಳು', Coordinator: 'ಸಂಯೋಜಕಿ', 'Open coordinator settings': 'ಸಂಯೋಜಕರ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ',
-  },
-  mr: {
-    Dashboard: 'डॅशबोर्ड', Children: 'मुले', 'Curriculum gap': 'अभ्यासक्रमातील अंतर', Learning: 'शिकणे', Translation: 'भाषांतर', Progress: 'प्रगती', 'Migration history': 'स्थलांतर इतिहास', Settings: 'सेटिंग्ज', Workspace: 'कार्यस्थळ', Overview: 'आढावा', 'Good morning, Anita': 'शुभ सकाळ, अनिता', 'Add child': 'मूल जोडा', Notifications: 'सूचना', Coordinator: 'समन्वयक', 'Open coordinator settings': 'समन्वयक सेटिंग्ज उघडा',
-  },
-};
+// Persisted so a phrase is only ever sent to LibreTranslate once, even across reloads.
+const CACHE_KEY = 'vidyayan-translation-cache';
 
-const pageCopy = {
-  hi: { Children: 'बच्चे', 'Add a child': 'बच्चा जोड़ें', 'Curriculum gap': 'पाठ्यक्रम अंतर', Decimals: 'दशमलव', 'Keep learning moving': 'सीखना जारी रखें', Progress: 'प्रगति', 'Migration history': 'स्थानांतरण इतिहास', Settings: 'सेटिंग्स', 'Your learning community': 'आपका सीखने वाला समुदाय', 'Build a learning record': 'सीखने का रिकॉर्ड बनाएं', 'Make the next step visible': 'अगला कदम स्पष्ट करें', 'A record that remembers': 'याद रखने वाला रिकॉर्ड', 'Nothing gets lost in the move': 'स्थानांतरण में कुछ नहीं खोता', 'Workspace preferences': 'कार्यस्थल प्राथमिकताएं' },
-  kn: { Children: 'ಮಕ್ಕಳು', 'Add a child': 'ಮಗುವನ್ನು ಸೇರಿಸಿ', 'Curriculum gap': 'ಪಠ್ಯಕ್ರಮ ಅಂತರ', Decimals: 'ದಶಮಾಂಶಗಳು', 'Keep learning moving': 'ಕಲಿಕೆಯನ್ನು ಮುಂದುವರಿಸಿ', Progress: 'ಪ್ರಗತಿ', 'Migration history': 'ವಲಸೆ ಇತಿಹಾಸ', Settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು', 'Your learning community': 'ನಿಮ್ಮ ಕಲಿಕಾ ಸಮುದಾಯ', 'Build a learning record': 'ಕಲಿಕಾ ದಾಖಲೆಯನ್ನು ರಚಿಸಿ', 'Make the next step visible': 'ಮುಂದಿನ ಹಂತವನ್ನು ಸ್ಪಷ್ಟಗೊಳಿಸಿ', 'A record that remembers': 'ನೆನಪಿನಲ್ಲಿರುವ ದಾಖಲೆ', 'Nothing gets lost in the move': 'ವಲಸೆಯಲ್ಲಿ ಏನೂ ಕಳೆದುಹೋಗುವುದಿಲ್ಲ', 'Workspace preferences': 'ಕಾರ್ಯಸ್ಥಳ ಆದ್ಯತೆಗಳು' },
-  mr: { Children: 'मुले', 'Add a child': 'मूल जोडा', 'Curriculum gap': 'अभ्यासक्रमातील अंतर', Decimals: 'दशांश', 'Keep learning moving': 'शिकणे सुरू ठेवा', Progress: 'प्रगती', 'Migration history': 'स्थलांतर इतिहास', Settings: 'सेटिंग्ज', 'Your learning community': 'तुमचा शिक्षण समुदाय', 'Build a learning record': 'शिक्षण नोंद तयार करा', 'Make the next step visible': 'पुढील पाऊल स्पष्ट करा', 'A record that remembers': 'लक्षात ठेवणारी नोंद', 'Nothing gets lost in the move': 'स्थलांतरात काहीही हरवत नाही', 'Workspace preferences': 'कार्यस्थळ प्राधान्ये' },
-};
+function loadCache() {
+  try {
+    return JSON.parse(localStorage.getItem(CACHE_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
 
-const screenCopy = {
-  hi: {
-    'Learning continuity workspace': 'सीखने की निरंतरता का कार्यस्थल', 'Welcome back.': 'वापसी पर स्वागत है।', 'Pick up every child’s learning journey from where it belongs: with them.': 'हर बच्चे की सीखने की यात्रा वहीं से जारी रखें जहां वह होनी चाहिए: बच्चे के साथ।', 'Create your account.': 'अपना खाता बनाएं।', 'Set up a coordinator account to keep every learning journey connected.': 'हर सीखने की यात्रा को जोड़ने के लिए समन्वयक खाता बनाएं।', 'Coordinator name': 'समन्वयक का नाम', 'Enter your full name': 'अपना पूरा नाम दर्ज करें', 'Phone number': 'फ़ोन नंबर', 'Password': 'पासवर्ड', 'Enter your password': 'अपना पासवर्ड दर्ज करें', 'Sign in': 'साइन इन करें', 'Create account': 'खाता बनाएं', 'New to Vidyayan? Create an account': 'Vidyayan पर नए हैं? खाता बनाएं', 'Already have an account? Sign in': 'पहले से खाता है? साइन इन करें', 'Prototype access · no backend authentication': 'प्रोटोटाइप एक्सेस · बैकएंड प्रमाणीकरण नहीं', 'Learning language tools': 'सीखने की भाषा के उपकरण', 'Translate a lesson': 'पाठ का अनुवाद करें', 'Text translation': 'टेक्स्ट अनुवाद', 'Source language': 'स्रोत भाषा', 'Target language': 'लक्ष्य भाषा', 'Enter text to translate...': 'अनुवाद के लिए टेक्स्ट दर्ज करें...', Translate: 'अनुवाद करें', Clear: 'साफ़ करें', 'Copy translation': 'अनुवाद कॉपी करें', 'Good morning, Anita': 'सुप्रभात, अनीता', 'Total children': 'कुल बच्चे', 'Active learning': 'सक्रिय सीखना', 'Pending gap analysis': 'लंबित अंतर विश्लेषण', 'Completed bridges': 'पूर्ण किए गए ब्रिज', 'Recent children': 'हाल के बच्चे', 'Recent activity': 'हाल की गतिविधि', 'Learning progress': 'सीखने की प्रगति', 'View all': 'सभी देखें', 'Add child': 'बच्चा जोड़ें', 'Home curriculum': 'गृह पाठ्यक्रम', 'Destination curriculum': 'गंतव्य पाठ्यक्रम', 'Analyze curriculum gap': 'पाठ्यक्रम अंतर का विश्लेषण करें', 'Analysis complete': 'विश्लेषण पूरा हुआ', 'Learning profile': 'सीखने की प्रोफ़ाइल', 'Learning summary': 'सीखने का सारांश', 'Continue': 'जारी रखें', 'Back to children': 'बच्चों पर वापस जाएं', 'Back to learning': 'सीखने पर वापस जाएं', 'Understanding decimal numbers': 'दशमलव संख्याओं को समझना', 'Check answer': 'उत्तर जांचें', 'Overall learning progress': 'कुल सीखने की प्रगति', 'Export record': 'रिकॉर्ड निर्यात करें', 'Export history': 'इतिहास निर्यात करें', 'View full record': 'पूरा रिकॉर्ड देखें', 'Current location': 'वर्तमान स्थान', 'Workspace preferences': 'कार्यस्थल प्राथमिकताएं', 'Edit profile': 'प्रोफ़ाइल संपादित करें', Done: 'पूर्ण', 'Default learning language': 'डिफ़ॉल्ट सीखने की भाषा', 'View curriculum gap': 'पाठ्यक्रम अंतर देखें', 'Start bridge lesson': 'ब्रिज पाठ शुरू करें', 'PDF material': 'PDF सामग्री', Listen: 'सुनें', Read: 'पढ़ें', 'Open lesson': 'पाठ खोलें', 'Download material': 'सामग्री डाउनलोड करें', 'See learning history': 'सीखने का इतिहास देखें', 'Need a hand?': 'मदद चाहिए?', 'Open the coordinator guide': 'समन्वयक गाइड खोलें',
-  },
-  kn: {
-    'Learning continuity workspace': 'ಕಲಿಕೆಯ ನಿರಂತರತಾ ಕಾರ್ಯಸ್ಥಳ', 'Welcome back.': 'ಮತ್ತೆ ಸ್ವಾಗತ.', 'Phone number': 'ಫೋನ್ ಸಂಖ್ಯೆ', Password: 'ಪಾಸ್‌ವರ್ಡ್', 'Sign in': 'ಸೈನ್ ಇನ್', 'Create account': 'ಖಾತೆ ರಚಿಸಿ', 'Learning language tools': 'ಕಲಿಕೆಯ ಭಾಷಾ ಸಾಧನಗಳು', 'Translate a lesson': 'ಪಾಠವನ್ನು ಅನುವಾದಿಸಿ', 'Text translation': 'ಪಠ್ಯ ಅನುವಾದ', 'Source language': 'ಮೂಲ ಭಾಷೆ', 'Target language': 'ಗುರಿ ಭಾಷೆ', Translate: 'ಅನುವಾದಿಸಿ', Clear: 'ತೆರವುಗೊಳಿಸಿ', 'Copy translation': 'ಅನುವಾದವನ್ನು ನಕಲಿಸಿ', 'Total children': 'ಒಟ್ಟು ಮಕ್ಕಳು', 'Active learning': 'ಸಕ್ರಿಯ ಕಲಿಕೆ', 'Recent children': 'ಇತ್ತೀಚಿನ ಮಕ್ಕಳು', 'Recent activity': 'ಇತ್ತೀಚಿನ ಚಟುವಟಿಕೆ', 'Add child': 'ಮಗುವನ್ನು ಸೇರಿಸಿ', 'Learning profile': 'ಕಲಿಕೆಯ ಪ್ರೊಫೈಲ್', 'Learning summary': 'ಕಲಿಕೆಯ ಸಾರಾಂಶ', Continue: 'ಮುಂದುವರಿಸಿ', 'Back to children': 'ಮಕ್ಕಳಿಗೆ ಹಿಂತಿರುಗಿ', 'Back to learning': 'ಕಲಿಕೆಗೆ ಹಿಂತಿರುಗಿ', 'Check answer': 'ಉತ್ತರ ಪರಿಶೀಲಿಸಿ', Progress: 'ಪ್ರಗತಿ', Settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು', 'Edit profile': 'ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ', Done: 'ಮುಗಿದಿದೆ', Listen: 'ಆಲಿಸಿ', Read: 'ಓದಿ', 'PDF material': 'PDF ವಸ್ತು', 'See learning history': 'ಕಲಿಕೆಯ ಇತಿಹಾಸ ನೋಡಿ',
-  },
-  mr: {
-    'Learning continuity workspace': 'शिक्षण सातत्य कार्यस्थळ', 'Welcome back.': 'पुन्हा स्वागत आहे.', 'Phone number': 'फोन नंबर', Password: 'पासवर्ड', 'Sign in': 'साइन इन', 'Create account': 'खाते तयार करा', 'Learning language tools': 'शिकण्याची भाषा साधने', 'Translate a lesson': 'धड्याचे भाषांतर करा', 'Text translation': 'मजकूर भाषांतर', 'Source language': 'स्रोत भाषा', 'Target language': 'लक्ष्य भाषा', Translate: 'भाषांतर करा', Clear: 'साफ करा', 'Copy translation': 'भाषांतर कॉपी करा', 'Total children': 'एकूण मुले', 'Active learning': 'सक्रिय शिक्षण', 'Recent children': 'अलीकडील मुले', 'Recent activity': 'अलीकडील क्रियाकलाप', 'Add child': 'मूल जोडा', 'Learning profile': 'शिक्षण प्रोफाइल', 'Learning summary': 'शिक्षण सारांश', Continue: 'पुढे जा', 'Back to children': 'मुलांकडे परत जा', 'Back to learning': 'शिकण्याकडे परत जा', 'Check answer': 'उत्तर तपासा', Progress: 'प्रगती', Settings: 'सेटिंग्ज', 'Edit profile': 'प्रोफाइल संपादित करा', Done: 'पूर्ण', Listen: 'ऐका', Read: 'वाचा', 'PDF material': 'PDF साहित्य', 'See learning history': 'शिक्षण इतिहास पहा',
-  },
-};
+function saveCache(cache) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // Storage full or unavailable - translations still work, just won't persist.
+  }
+}
 
+const cache = loadCache();
+const cacheKey = (language, text) => `${language}::${text}`;
+
+// Original (English) text is stashed here the first time a node/attribute is seen,
+// so switching back to English - or re-translating after a re-render - always starts
+// from the true source text rather than a previously translated one.
 const sourceText = new WeakMap();
 const sourceAttributes = new WeakMap();
+const IGNORE_TAGS = ['SCRIPT', 'STYLE', 'OPTION', 'NOSCRIPT'];
+const TRANSLATED_ATTRS = ['placeholder', 'aria-label', 'title'];
 
-function translateScreen(language) {
-  const dictionary = screenCopy[language] || {};
-  const root = document.body;
+function shouldSkip(element) {
+  return element?.closest?.('[data-no-translate]');
+}
+
+// Walk the live DOM and collect every distinct piece of English text on screen right now.
+function collectStrings(root) {
+  const strings = new Set();
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (IGNORE_TAGS.includes(node.parentElement?.tagName) || shouldSkip(node.parentElement)) continue;
+    const original = sourceText.get(node) ?? node.nodeValue;
+    const trimmed = original.trim();
+    if (trimmed) strings.add(trimmed);
+  }
+  root.querySelectorAll('input, textarea, [aria-label], [title], [placeholder]').forEach(element => {
+    if (shouldSkip(element)) return;
+    const stored = sourceAttributes.get(element) || {};
+    TRANSLATED_ATTRS.forEach(attribute => {
+      if (!element.hasAttribute(attribute)) return;
+      const original = stored[attribute] ?? element.getAttribute(attribute);
+      const trimmed = original.trim();
+      if (trimmed) strings.add(trimmed);
+    });
+  });
+  return [...strings];
+}
+
+// Runs a handful of translate calls at a time instead of firing dozens at once,
+// which keeps a local LibreTranslate instance responsive.
+async function translateBatch(language, texts, concurrency = 2) {
+  const pending = [...new Set(texts)].filter(text => !(cacheKey(language, text) in cache));
+  if (pending.length === 0) return;
+  let index = 0;
+  async function worker() {
+    while (index < pending.length) {
+      const text = pending[index++];
+      try {
+        cache[cacheKey(language, text)] = await translateText({ sourceLanguage: 'en', targetLanguage: language, text });
+      } catch (err) {
+        // Deliberately NOT cached: a failed phrase stays uncached so it's retried
+        // next time translateScreen runs, instead of being stuck in English forever.
+        console.warn(`Translation failed for "${text}" (${language}):`, err.message);
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, pending.length) }, worker));
+  saveCache(cache);
+}
+
+// Applies whatever is already in the cache to the DOM. Safe to call before every
+// phrase has arrived - anything not cached yet is simply left in English for now.
+function applyTranslations(root, language) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const nodes = [];
-  while (walker.nextNode()) nodes.push(walker.currentNode);
-  nodes.forEach(node => {
-    if (!sourceText.has(node)) sourceText.set(node, node.nodeValue);
-    const original = sourceText.get(node);
+  let node;
+  while ((node = walker.nextNode())) nodes.push(node);
+
+  nodes.forEach(textNode => {
+    if (IGNORE_TAGS.includes(textNode.parentElement?.tagName) || shouldSkip(textNode.parentElement)) return;
+    if (!sourceText.has(textNode)) sourceText.set(textNode, textNode.nodeValue);
+    const original = sourceText.get(textNode);
     const trimmed = original.trim();
-    if (!trimmed || ['SCRIPT', 'STYLE', 'OPTION'].includes(node.parentElement?.tagName)) return;
-    const translated = language === 'en' ? original : original.replace(trimmed, dictionary[trimmed] || trimmed);
-    if (node.nodeValue !== translated) node.nodeValue = translated;
+    if (!trimmed) return;
+    const translated = language === 'en' ? trimmed : cache[cacheKey(language, trimmed)] || trimmed;
+    const nextValue = original.replace(trimmed, translated);
+    if (textNode.nodeValue !== nextValue) textNode.nodeValue = nextValue;
   });
-  root.querySelectorAll('input, textarea, [aria-label], [title]').forEach(element => {
+
+  root.querySelectorAll('input, textarea, [aria-label], [title], [placeholder]').forEach(element => {
+    if (shouldSkip(element)) return;
     if (!sourceAttributes.has(element)) sourceAttributes.set(element, {});
-    const attributes = sourceAttributes.get(element);
-    ['placeholder', 'aria-label', 'title'].forEach(attribute => {
+    const stored = sourceAttributes.get(element);
+    TRANSLATED_ATTRS.forEach(attribute => {
       if (!element.hasAttribute(attribute)) return;
-      if (!attributes[attribute]) attributes[attribute] = element.getAttribute(attribute);
-      const original = attributes[attribute];
-      const nextValue = language === 'en' ? original : dictionary[original] || original;
-      if (element.getAttribute(attribute) !== nextValue) element.setAttribute(attribute, nextValue);
+      if (!stored[attribute]) stored[attribute] = element.getAttribute(attribute);
+      const original = stored[attribute];
+      const trimmed = original.trim();
+      const translated = language === 'en' || !trimmed ? original : cache[cacheKey(language, trimmed)] || original;
+      if (element.getAttribute(attribute) !== translated) element.setAttribute(attribute, translated);
     });
   });
 }
 
+async function translateScreen(language) {
+  document.documentElement.lang = language;
+  const root = document.body;
+  if (language === 'en') {
+    applyTranslations(root, language);
+    return;
+  }
+  const strings = collectStrings(root);
+  document.documentElement.dataset.translating = 'true';
+  await translateBatch(language, strings);
+  applyTranslations(root, language);
+  delete document.documentElement.dataset.translating;
+}
+
 export function useScreenTranslation(language) {
   useEffect(() => {
-    document.documentElement.lang = language;
     translateScreen(language);
+    // React re-renders add/replace DOM nodes constantly (navigation, new data, etc.);
+    // re-run on every change so newly rendered text gets translated too.
     const observer = new MutationObserver(() => translateScreen(language));
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
@@ -86,9 +151,14 @@ const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => localStorage.getItem('vidyayan-language') || 'en');
-  const changeLanguage = value => { setLanguage(value); localStorage.setItem('vidyayan-language', value); };
+  const changeLanguage = value => {
+    setLanguage(value);
+    localStorage.setItem('vidyayan-language', value);
+  };
   useScreenTranslation(language);
-  const value = useMemo(() => ({ language, setLanguage: changeLanguage, t: key => copy[language]?.[key] || pageCopy[language]?.[key] || copy.en[key] || key }), [language]);
+  // t() is kept only so existing components don't need to change - it just returns the
+  // key as-is. The DOM walk above is what actually translates it, along with everything else.
+  const value = useMemo(() => ({ language, setLanguage: changeLanguage, t: key => key }), [language]);
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 

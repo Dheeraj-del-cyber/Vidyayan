@@ -10,7 +10,7 @@ function LanguageSelect({ label, value, onChange, includeAuto = false }) {
 }
 
 export default function Translation() {
-  const [sourceLanguage, setSourceLanguage] = useState('auto');
+  const [sourceLanguage, setSourceLanguage] = useState('en');
   const [targetLanguage, setTargetLanguage] = useState('kn');
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
