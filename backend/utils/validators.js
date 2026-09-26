@@ -10,43 +10,24 @@ export function normalizePhone(phone) {
 
 export function validateRegistration(body) {
   const errors = [];
-  const {
-    name, phone, password, confirmPassword,
-    nativeLanguage, previousState, currentState,
-    migratedMonth, migratedYear,
-  } = body || {};
+  const { name, phone, password, confirmPassword } = body || {};
 
   if (!name || !name.trim()) errors.push('Name is required.');
   if (!phone || !isValidPhone(phone)) errors.push('Enter a valid phone number with at least 10 digits.');
   if (!password || password.length < 6) errors.push('Password must be at least 6 characters.');
   if (password !== confirmPassword) errors.push('Password and re-entered password do not match.');
-  if (!nativeLanguage) errors.push('Native language is required.');
-  if (!previousState) errors.push('Previous state is required.');
-  if (!currentState) errors.push('Current state is required.');
-  if (!migratedMonth) errors.push('Migrated month is required.');
-  if (!migratedYear || Number.isNaN(Number(migratedYear))) errors.push('Migrated year is required.');
 
   return errors;
 }
 
 // Phone number is deliberately left out: it's how a person signs in, so it
-// isn't editable from the profile screen.
+// isn't editable from the profile screen. Password isn't handled here
+// either - that goes through validatePasswordChange below.
 export function validateProfileUpdate(body) {
   const errors = [];
-  const {
-    name, nativeLanguage, previousState, currentState,
-    migratedMonth, migratedYear, avatar,
-  } = body || {};
+  const { name } = body || {};
 
   if (!name || !name.trim()) errors.push('Name is required.');
-  if (!nativeLanguage) errors.push('Native language is required.');
-  if (!previousState) errors.push('Previous state is required.');
-  if (!currentState) errors.push('Current state is required.');
-  if (!migratedMonth) errors.push('Migrated month is required.');
-  if (!migratedYear || Number.isNaN(Number(migratedYear))) errors.push('Migrated year is required.');
-  if (avatar && typeof avatar === 'string' && avatar.length > 4_000_000) {
-    errors.push('That photo is too large. Try a smaller image.');
-  }
 
   return errors;
 }
@@ -57,6 +38,17 @@ export function validateLogin(body) {
 
   if (!phone || !isValidPhone(phone)) errors.push('Enter a valid phone number.');
   if (!password) errors.push('Password is required.');
+
+  return errors;
+}
+
+export function validatePasswordChange(body) {
+  const errors = [];
+  const { currentPassword, newPassword, confirmNewPassword } = body || {};
+
+  if (!currentPassword) errors.push('Enter your current password.');
+  if (!newPassword || newPassword.length < 6) errors.push('New password must be at least 6 characters.');
+  if (newPassword !== confirmNewPassword) errors.push('New password and re-entered password do not match.');
 
   return errors;
 }

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
 
-export default function PasswordField({ name, placeholder, autoComplete }) {
+export default function PasswordField({ name, placeholder, autoComplete, value, onChange }) {
   const [visible, setVisible] = useState(false);
+  const controlled = value !== undefined;
   return (
     <div className="login-input">
       <LockKeyhole size={17} />
@@ -11,6 +12,7 @@ export default function PasswordField({ name, placeholder, autoComplete }) {
         type={visible ? 'text' : 'password'}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        {...(controlled ? { value, onChange } : {})}
       />
       <button
         type="button"

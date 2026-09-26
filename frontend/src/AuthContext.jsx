@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { apiLogin, apiRegister, apiMe, apiUpdateProfile } from './api';
+import { apiLogin, apiRegister, apiMe, apiUpdateProfile, apiChangePassword } from './api';
 
 const AuthContext = createContext(null);
 const TOKEN_KEY = 'vidyayan-token';
@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
     setUser(data.user);
     return data.user;
   };
+  const changePassword = async payload => apiChangePassword(token, payload);
   const logout = () => {
     localStorage.removeItem(TOKEN_KEY);
     setToken(null);
@@ -43,7 +44,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, loading, login, register, updateProfile, logout }}>
+    <AuthContext.Provider value={{ token, user, loading, login, register, updateProfile, changePassword, logout }}>
       {children}
     </AuthContext.Provider>
   );
