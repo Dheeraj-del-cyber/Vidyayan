@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 # Vidyayan is a React/Vite frontend and has no Python dependencies.
 # Install frontend dependencies with: npm install
+=======
+npm install react react-dom react-router-dom lucide-react
+npm install -D vite @vitejs/plugin-react
+>>>>>>> 9b67b2b1898d5841177fbda0875bed70178fca90
