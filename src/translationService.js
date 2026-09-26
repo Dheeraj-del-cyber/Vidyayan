@@ -13,32 +13,36 @@ export const supportedLanguages = [
   { value: 'ur', label: 'Urdu' },
 ];
 
-const phraseTranslations = {
-  'en->kn': { 'good morning, how are you?': 'ಶುಭೋದಯ, ನೀವು ಹೇಗಿದ್ದೀರಿ?', 'good morning': 'ಶುಭೋದಯ' },
-  'en->hi': { 'good morning, how are you?': 'सुप्रभात, आप कैसे हैं?', 'good morning': 'सुप्रभात' },
-  'en->mr': { 'good morning, how are you?': 'शुभ प्रभात, तुम्ही कसे आहात?', 'good morning': 'शुभ प्रभात' },
-  'en->ta': { 'good morning, how are you?': 'காலை வணக்கம், நீங்கள் எப்படி இருக்கிறீர்கள்?', 'good morning': 'காலை வணக்கம்' },
-  'en->te': { 'good morning, how are you?': 'శుభోదయం, మీరు ఎలా ఉన్నారు?', 'good morning': 'శుభోదయం' },
-  'en->ml': { 'good morning, how are you?': 'സുപ്രഭാതം, നിങ്ങൾക്ക് എങ്ങനെയുണ്ട്?', 'good morning': 'സുപ്രഭാതം' },
-  'en->bn': { 'good morning, how are you?': 'সুপ্রভাত, আপনি কেমন আছেন?', 'good morning': 'সুপ্রভাত' },
-  'en->gu': { 'good morning, how are you?': 'સુપ્રભાત, તમે કેમ છો?', 'good morning': 'સુપ્રભાત' },
-  'en->pa': { 'good morning, how are you?': 'ਸ਼ੁਭ ਸਵੇਰ, ਤੁਸੀਂ ਕਿਵੇਂ ਹੋ?', 'good morning': 'ਸ਼ੁਭ ਸਵੇਰ' },
-  'en->ur': { 'good morning, how are you?': 'صبح بخیر، آپ کیسے ہیں؟', 'good morning': 'صبح بخیر' },
-};
+// The frontend calls this small local backend (see server/index.js), which
+// in turn forwards the request to your LibreTranslate server. Point this at
+// a different backend with a VITE_TRANSLATE_API_URL env var if needed.
+const TRANSLATE_API_URL = (import.meta.env && import.meta.env.VITE_TRANSLATE_API_URL) || 'http://localhost:4000/api/translate';
 
 const languageName = code => supportedLanguages.find(language => language.value === code)?.label || code;
 
-export function translateText({ sourceLanguage, targetLanguage, text }) {
+export async function translateText({ sourceLanguage, targetLanguage, text }) {
   const cleanText = text.trim();
   if (!cleanText) throw new Error('Enter text to translate.');
   if (!targetLanguage || targetLanguage === 'auto') throw new Error('Choose a target language.');
   if (sourceLanguage === targetLanguage) throw new Error('Choose two different languages.');
 
-  const detectedSource = sourceLanguage === 'auto' ? 'en' : sourceLanguage;
-  const key = `${detectedSource}->${targetLanguage}`;
-  const translated = phraseTranslations[key]?.[cleanText.toLowerCase()];
-  if (!translated) {
-    throw new Error(`This demo has no saved translation for ${languageName(detectedSource)} to ${languageName(targetLanguage)} yet.`);
+  let response;
+  try {
+    response = await fetch(TRANSLATE_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ q: cleanText, source: sourceLanguage, target: targetLanguage }),
+    });
+  } catch {
+    throw new Error('Could not reach the translation backend. Run "npm run server" (and make sure LibreTranslate is running too).');
   }
-  return translated;
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || `Could not translate ${languageName(sourceLanguage)} to ${languageName(targetLanguage)} right now.`);
+  }
+  if (!data.translatedText) throw new Error('The translation service returned an empty result.');
+
+  return data.translatedText;
 }

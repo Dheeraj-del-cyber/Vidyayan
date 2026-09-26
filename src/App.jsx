@@ -17,7 +17,6 @@ const navItems = [
   { key: 'Dashboard', to: '/', icon: LayoutDashboard },
   { key: 'Curriculum gap', to: '/curriculum-gap', icon: Target },
   { key: 'Learning', to: '/learning', icon: BookOpen },
-  { key: 'Translation', to: '/translation', icon: Languages },
   { key: 'Progress', to: '/progress', icon: Gauge },
   { key: 'Migration history', to: '/migration-history', icon: MapPinned },
 ];

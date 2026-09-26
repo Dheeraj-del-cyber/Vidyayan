@@ -22,9 +22,9 @@ export default function Translation() {
     setError('');
     setCopied(false);
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 420));
     try {
-      setTranslatedText(translateText({ sourceLanguage, targetLanguage, text: inputText }));
+      const result = await translateText({ sourceLanguage, targetLanguage, text: inputText });
+      setTranslatedText(result);
     } catch (translationError) {
       setTranslatedText('');
       setError(translationError.message);
@@ -62,7 +62,7 @@ export default function Translation() {
   };
 
   return <div className="translation-page">
-    <div className="translation-intro"><div><div className="eyebrow">Learning language tools</div><h1>Translate a lesson</h1><p>Prepare simple learning content in a language a child can use immediately.</p></div><div className="translation-note"><Sparkles size={16} /><span>Local demo mode · no API connected</span></div></div>
+    <div className="translation-intro"><div><div className="eyebrow">Learning language tools</div><h1>Translate a lesson</h1><p>Prepare simple learning content in a language a child can use immediately.</p></div><div className="translation-note"><Sparkles size={16} /><span>Connected to a local LibreTranslate server</span></div></div>
     <section className="translation-card" aria-label="Text translation">
       <div className="translation-card-head"><div><span className="section-kicker">Text translation</span><h2>Make the next explanation feel familiar.</h2></div><span className="translation-status"><span /> Ready to translate</span></div>
       <div className="translation-workspace">
@@ -71,9 +71,9 @@ export default function Translation() {
         <div className="translation-pane output-pane"><LanguageSelect label="Target language" value={targetLanguage} onChange={value => { setTargetLanguage(value); setError(''); }} /><div className={`translation-output ${translatedText ? 'has-output' : ''}`} aria-live="polite">{loading ? <div className="translation-loading"><LoaderCircle size={20} /><span>Preparing translation...</span></div> : translatedText || <span>Translated text will appear here...</span>}</div><div className="translation-pane-footer"><span>{translatedText.length} characters</span><button className="quiet-button" onClick={handleCopy} disabled={!translatedText}><Clipboard size={15} /> {copied ? 'Copied' : 'Copy translation'}</button></div></div>
       </div>
       {error && <div className="translation-error" role="alert"><span>!</span>{error}</div>}
-      <div className="translation-actions"><button className="primary-button" onClick={handleTranslate} disabled={loading}>{loading ? <><LoaderCircle size={17} className="spin" /> Translating...</> : <><Languages size={17} /> Translate</>}</button><span>Try: “Good morning, how are you?”</span></div>
+      <div className="translation-actions"><button className="primary-button" onClick={handleTranslate} disabled={loading}>{loading ? <><LoaderCircle size={17} className="spin" /> Translating...</> : <><Languages size={17} /> Translate</>}</button><span>Works with any sentence, not just saved phrases</span></div>
     </section>
-    <div className="translation-help"><div className="translation-help-icon"><Check size={18} /></div><div><strong>Built for future language services</strong><p>The local demo uses saved phrases only. The isolated translation service can be connected to a real API later without changing this interface.</p></div></div>
+    <div className="translation-help"><div className="translation-help-icon"><Check size={18} /></div><div><strong>Runs fully on your machine</strong><p>Text is sent to a small local backend, which forwards it to your own LibreTranslate server — nothing leaves your computer.</p></div></div>
   </div>;
 }
 
