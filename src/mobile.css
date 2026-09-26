@@ -1,0 +1,7 @@
+.bottom-nav{display:none}
+
+@media (max-width: 680px){
+  .bottom-nav{display:grid;position:fixed;z-index:10;left:12px;right:12px;bottom:12px;grid-template-columns:repeat(4,1fr);padding:7px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(42,57,48,.1)}
+  .bottom-nav-item{display:grid;justify-items:center;gap:3px;padding:7px 2px;border-radius:8px;color:#8a9790;font-size:9px;font-weight:700}
+  .bottom-nav-item.active{color:var(--coral);background:var(--coral-soft)}
+}
