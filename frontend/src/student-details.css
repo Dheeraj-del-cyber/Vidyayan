@@ -1,0 +1,17 @@
+.student-flash-name{display:block;max-width:100%;padding:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:700;text-align:left;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;cursor:pointer}
+.student-flash-name:hover{color:var(--coral);text-decoration:underline;text-underline-offset:3px}
+.student-flash-name:focus-visible{outline:2px solid var(--coral);outline-offset:3px;border-radius:2px}
+.profile-hero-main>div p{margin:5px 0 0;color:var(--muted);font-size:12px}
+.student-detail-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.student-detail-card{min-width:0;padding:19px 21px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.student-detail-label{display:block;margin-bottom:15px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.8px}
+.student-learning-status{display:flex;align-items:center;gap:8px}
+.student-learning-status strong{font-size:14px}
+.student-status-dot{width:8px;height:8px;flex:none;background:#d88955;border-radius:50%;box-shadow:0 0 0 4px #f7eee4}
+.student-detail-card>p{display:flex;align-items:center;gap:6px;margin:9px 0 13px;color:var(--muted);font-size:11px;line-height:1.5}
+.student-detail-card .text-button{font-size:11px}
+.student-migration-route{display:flex;align-items:center;gap:16px;color:var(--coral)}
+.student-migration-route>div{display:grid;gap:5px;min-width:0}
+.student-migration-route small{color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.7px}
+.student-migration-route strong{overflow-wrap:anywhere;color:var(--ink);font-size:14px}
+@media(max-width:760px){.student-detail-overview{grid-template-columns:1fr}}

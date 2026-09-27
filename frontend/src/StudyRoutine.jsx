@@ -1,18 +1,21 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { gaps } from './data';
+import { getStudent } from './studentsStore';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export default function StudyRoutine() {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const name = state?.name;
+  const { studentId } = useParams();
+  const student = (studentId && getStudent(studentId)) || state;
+  const name = student?.name;
   // Study hours come only from what was actually entered against the
   // child's daily routine timetable on the Add student page. A day with
   // no entry stays blank here - it is never filled in with a guessed or
   // default number.
-  const dailyStudyHours = state?.dailyStudyHours || {};
+  const dailyStudyHours = student?.dailyStudyHours || {};
 
   // Topics come from the real identified gaps (data.js `gaps`), two per
   // day, taken in order. Once the gap list runs out, remaining topic
@@ -26,7 +29,7 @@ export default function StudyRoutine() {
   }));
 
   return <>
-    <button className="back-link" onClick={() => navigate(-1)}><ArrowRight size={15} className="back-arrow" /> Back to analysis</button>
+    <button className="back-link" onClick={() => studentId ? navigate(`/students/${studentId}`) : navigate(-1)}><ArrowRight size={15} className="back-arrow" /> Back to student details</button>
     <div className="page-intro"><div><div className="eyebrow">{name ? `For ${name}` : 'Weekly plan'}</div><h1>Study routine</h1><p>Study hours from the daily routine timetable, two focus topics a day from the identified gaps.</p></div></div>
 
     <div className="routine-table-wrap">

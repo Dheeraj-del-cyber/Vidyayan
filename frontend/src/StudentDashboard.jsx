@@ -1,5 +1,6 @@
 import { BookOpen, Gauge, Languages, MapPinned, Pencil, Plus, Route as RouteIcon, Target, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import './student-details.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { getStudents } from './studentsStore';
@@ -60,7 +61,7 @@ export default function StudentDashboard() {
   useEffect(() => { setStudents(getStudents()); }, []);
 
   return <div className="student-home">
-    <div className="student-welcome"><div><span className="eyebrow">Your learning space · {getTodayLabel()}</span><h1>{getGreeting()}, {firstName}</h1><p>Your family may move, but your learning keeps moving with you.</p></div><button className="primary-button" onClick={() => navigate('/learning/lesson')}><BookOpen size={18} /> Continue learning</button></div>
+    <div className="student-welcome"><div><span className="eyebrow">Your learning space · {getTodayLabel()}</span><h1>{getGreeting()}, {firstName}</h1><p>Your family may move, but your learning keeps moving with you.</p></div></div>
     <FeatureTicker />
     <div className="add-student-row"><button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add Student</button></div>
 
@@ -71,7 +72,7 @@ export default function StudentDashboard() {
             {student.photo ? <img src={student.photo} alt={student.name} /> : <UserRound size={20} />}
           </span>
           <div className="student-flash-info">
-            <strong>{student.name || 'Unnamed student'}</strong>
+            <button type="button" className="student-flash-name" onClick={() => navigate(`/students/${student.id}`)}>{student.name || 'Unnamed student'}</button>
             <span>{student.className || ''}</span>
           </div>
           <button className="student-flash-edit" onClick={() => navigate(`/add-student/${student.id}`)}>
