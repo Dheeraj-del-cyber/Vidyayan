@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Camera, Check, FileText, Image, UserRound, X } from 'lucide-react';
+import { Camera, Check, FileText, Image, UserRound, X, Zap } from 'lucide-react';
 import { indianStates } from './indianStates';
 import { getStudent, makeStudentId, saveStudent } from './studentsStore';
 
 const classOptions = Array.from({ length: 10 }, (_, i) => `Class ${i + 1}`);
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+// Realistic sample students for quick prototype demos. Picked at random.
+const mockProfiles = [
+  { name: 'Aarav Sharma', className: 'Class 7', age: '12', previousState: 'Bihar', currentState: 'Maharashtra', migratedMonth: '2026-03', studyHours: { Monday: '2', Tuesday: '2.5', Wednesday: '2', Thursday: '3', Friday: '2', Saturday: '4', Sunday: '1' } },
+  { name: 'Priya Kumari', className: 'Class 5', age: '10', previousState: 'Rajasthan', currentState: 'Gujarat', migratedMonth: '2026-06', studyHours: { Monday: '1.5', Tuesday: '2', Wednesday: '1.5', Thursday: '2', Friday: '1', Saturday: '3', Sunday: '2' } },
+  { name: 'Rohan Patel', className: 'Class 9', age: '14', previousState: 'Uttar Pradesh', currentState: 'Karnataka', migratedMonth: '2025-11', studyHours: { Monday: '3', Tuesday: '2.5', Wednesday: '3', Thursday: '2', Friday: '2.5', Saturday: '5', Sunday: '1.5' } },
+  { name: 'Ananya Devi', className: 'Class 4', age: '9', previousState: 'Jharkhand', currentState: 'Tamil Nadu', migratedMonth: '2026-01', studyHours: { Monday: '1', Tuesday: '1.5', Wednesday: '1', Thursday: '1.5', Friday: '1', Saturday: '2.5', Sunday: '2' } },
+  { name: 'Kabir Singh', className: 'Class 8', age: '13', previousState: 'Punjab', currentState: 'Andhra Pradesh', migratedMonth: '2026-08', studyHours: { Monday: '2.5', Tuesday: '3', Wednesday: '2', Thursday: '2.5', Friday: '2', Saturday: '4.5', Sunday: '1' } },
+];
 
 function readAsDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -95,9 +104,22 @@ export default function AddStudent() {
     navigate('/students/analysis', { state: student });
   };
 
+  const fillMockData = () => {
+    const mock = mockProfiles[Math.floor(Math.random() * mockProfiles.length)];
+    setName(mock.name);
+    setClassName(mock.className);
+    setAge(mock.age);
+    setPreviousState(mock.previousState);
+    setCurrentState(mock.currentState);
+    setMigratedMonth(mock.migratedMonth);
+    setStudyHours(mock.studyHours);
+    setPhoto(null);
+    setTimetable(null);
+  };
+
   return <>
     <button className="back-link" onClick={() => navigate('/')}><X size={15} /> Cancel</button>
-    <div className="page-intro"><div><div className="eyebrow">{isEditing ? 'Update a learning record' : 'Build a learning record'}</div><h1>{isEditing ? 'Edit student' : 'Add student'}</h1><p>{isEditing ? "Update this student's details." : "Add a student's details so their learning record can travel with them."}</p></div></div>
+    <div className="page-intro"><div><div className="eyebrow">{isEditing ? 'Update a learning record' : 'Build a learning record'}</div><h1>{isEditing ? 'Edit student' : 'Add student'}</h1><p>{isEditing ? "Update this student's details." : "Add a student's details so their learning record can travel with them."}</p></div>{!isEditing && <button type="button" className="secondary-button mock-data-btn" onClick={fillMockData}><Zap size={16} /> Fill Demo Data</button>}</div>
 
     <form className="form-layout" onSubmit={handleSubmit}>
       <div className="form-card">

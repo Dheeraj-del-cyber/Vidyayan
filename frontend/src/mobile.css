@@ -35,6 +35,10 @@ button:active{transform:scale(.97)}
 .add-student-row{display:flex;justify-content:center;margin-top:8px}
 .add-student-btn{min-height:52px;padding:0 28px;font-size:15px;font-weight:700;border-radius:12px;letter-spacing:-.2px;gap:10px;background:linear-gradient(135deg,#2a3e38 0%,#344843 100%);box-shadow:0 6px 20px rgba(36,50,47,.18);transition:transform .22s ease,box-shadow .22s ease,background .22s ease}
 .add-student-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(36,50,47,.24);background:linear-gradient(135deg,#344843 0%,#3d5750 100%)}
+.mock-data-btn{border-color:var(--yellow);color:#8a6d1b;background:var(--yellow-soft);gap:8px;flex:none;align-self:flex-end;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.mock-data-btn:hover{background:#fff0b8;border-color:#c49a2e;box-shadow:0 6px 18px rgba(217,169,54,.16);transform:translateY(-1px)}
+.mock-data-btn:active{transform:scale(.97)}
+.mock-data-btn svg{color:#b88c26}
 
 @media(max-width:680px){.student-welcome{display:block}.student-welcome h1{font-size:32px}.student-welcome .primary-button{margin-top:18px}.feature-box{width:190px;padding:16px}}
 .settings-editor{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 22px;margin:-4px 0 12px;background:#fff;border:1px solid var(--line);border-radius:11px}
