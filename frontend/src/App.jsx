@@ -39,7 +39,7 @@ function Sidebar({ onClose }) {
     <div className="sidebar-top"><div className="brand-cluster"><Brand /></div></div>
     <div className="sidebar-label">My learning</div>
     <nav className="side-nav">{navItems.map(({ key, to, icon: Icon }) => <NavLink key={to} to={to} end={to === '/'} onClick={onClose} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><Icon size={18} /><span>{t(key)}</span></NavLink>)}</nav>
-    <div className="sidebar-foot"><NavLink to="/settings" onClick={onClose} className="nav-item"><Settings size={18} /><span>{t('Settings')}</span></NavLink><NavLink to="/settings" onClick={onClose} className="help-box"><CircleHelp size={17} /><div><strong>Need support?</strong><span>Open the learning guide</span></div></NavLink></div>
+    <div className="sidebar-foot"><NavLink to="/settings" onClick={onClose} className="help-box"><CircleHelp size={17} /><div><strong>Need support?</strong><span>Open the learning guide</span></div></NavLink></div>
   </aside>;
 }
 
