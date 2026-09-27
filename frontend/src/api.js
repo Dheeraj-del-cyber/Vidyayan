@@ -48,6 +48,10 @@ export function apiSyllabi() {
   return request('/api/syllabi');
 }
 
+export function apiExtractSyllabusText(documentId) {
+  return request(`/api/syllabi/${encodeURIComponent(documentId)}/text`);
+}
+
 export function apiCompareSyllabi({ homeState, destinationState, grade, subject }) {
   const params = new URLSearchParams({ homeState, destinationState, grade, subject });
   return request(`/api/syllabi/compare?${params.toString()}`);

@@ -1,10 +1,21 @@
 import { Router } from 'express';
+import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
 const router = Router();
+const execFileAsync = promisify(execFile);
 const DATA_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'data');
+const EXTRACTOR_SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'scripts', 'extract_syllabus.py');
+const PYTHON_EXECUTABLE = process.env.PYTHON_EXECUTABLE || 'python';
+
+function resolveDocumentPath(document) {
+  const relativePath = Buffer.from(document.id, 'base64url').toString().split('/');
+  const absolutePath = path.resolve(DATA_ROOT, ...relativePath);
+  return absolutePath.startsWith(`${DATA_ROOT}${path.sep}`) ? absolutePath : null;
+}
 
 async function collectPdfFiles(directory, files = []) {
   let entries;
@@ -145,6 +156,33 @@ router.get('/syllabi/compare', async (req, res, next) => {
   }
 });
 
+router.get('/syllabi/:id/text', async (req, res, next) => {
+  try {
+    const document = (await getDocuments()).find(item => item.id === req.params.id);
+    if (!document) return res.status(404).json({ error: 'Syllabus document not found.' });
+
+    const pdfPath = resolveDocumentPath(document);
+    if (!pdfPath) return res.status(400).json({ error: 'Invalid syllabus document path.' });
+
+    const { stdout } = await execFileAsync(PYTHON_EXECUTABLE, [EXTRACTOR_SCRIPT, pdfPath], {
+      timeout: 120000,
+      maxBuffer: 8 * 1024 * 1024,
+      windowsHide: true,
+    });
+
+    return res.json({
+      document: { state: document.state, grade: document.grade, subject: document.subject, title: document.title },
+      ...JSON.parse(stdout),
+    });
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return res.status(503).json({ error: 'Python or pypdf is unavailable. Install backend/requirements.txt or set PYTHON_EXECUTABLE.' });
+    }
+    if (error.killed) return res.status(504).json({ error: 'PDF text extraction timed out.' });
+    return next(error);
+  }
+});
+
 router.get('/syllabi', async (req, res, next) => {
   try {
     const documents = await getDocuments();
@@ -160,8 +198,8 @@ router.get('/syllabi/:id', async (req, res, next) => {
     const document = (await getDocuments()).find(item => item.id === req.params.id);
     if (!document) return res.status(404).json({ error: 'Syllabus document not found.' });
 
-    const absolutePath = path.resolve(DATA_ROOT, ...Buffer.from(document.id, 'base64url').toString().split('/'));
-    if (!absolutePath.startsWith(`${DATA_ROOT}${path.sep}`)) {
+    const absolutePath = resolveDocumentPath(document);
+    if (!absolutePath) {
       return res.status(400).json({ error: 'Invalid syllabus document path.' });
     }
 

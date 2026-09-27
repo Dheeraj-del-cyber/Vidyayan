@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, ArrowLeftRight, BookOpen, Check, CircleHelp, ExternalLink, FileText, LoaderCircle, Search, Sparkles } from 'lucide-react';
-import { API_URL, apiCompareSyllabi, apiSyllabi } from './api';
+import { API_URL, apiCompareSyllabi, apiExtractSyllabusText, apiSyllabi } from './api';
 import './syllabus.css';
 
 const grades = Array.from({ length: 10 }, (_, index) => index + 1);
 
-function DocumentList({ documents, state, loading }) {
+function DocumentList({ documents, state, loading, extractingId, onExtract }) {
   if (loading) return <p className="syllabus-empty">Loading available PDFs...</p>;
   if (!documents.length) return <p className="syllabus-empty">No matching PDFs found for {state}.</p>;
 
@@ -15,6 +15,12 @@ function DocumentList({ documents, state, loading }) {
       <div className="syllabus-document-copy">
         <strong>{document.title}</strong>
         <span>{[document.strand, document.part && `Part ${document.part}`, document.academicYear, document.language !== 'Not specified' && document.language].filter(Boolean).join(' · ')}</span>
+      </div>
+      <div className="syllabus-document-actions">
+        <button type="button" className="syllabus-extract-button" onClick={() => onExtract(document)} disabled={extractingId === document.id}>
+          {extractingId === document.id ? <LoaderCircle className="spin" size={15} /> : <Search size={15} />}
+          Extract text
+        </button>
       </div>
       <a href={`${API_URL}${document.url}`} target="_blank" rel="noreferrer" aria-label={`Open ${document.fileName} in a new tab`}>
         <ExternalLink size={17} />
@@ -35,6 +41,9 @@ export default function SyllabusLookup() {
   const [comparison, setComparison] = useState(null);
   const [comparisonError, setComparisonError] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
+  const [extractingId, setExtractingId] = useState('');
+  const [extraction, setExtraction] = useState(null);
+  const [extractionError, setExtractionError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -81,6 +90,19 @@ export default function SyllabusLookup() {
     }
   };
 
+  const handleExtract = async document => {
+    setExtractingId(document.id);
+    setExtraction(null);
+    setExtractionError('');
+    try {
+      setExtraction(await apiExtractSyllabusText(document.id));
+    } catch (extractError) {
+      setExtractionError(extractError.message);
+    } finally {
+      setExtractingId('');
+    }
+  };
+
   return <div className="syllabus-page">
     <div className="syllabus-heading">
       <div>
@@ -111,7 +133,7 @@ export default function SyllabusLookup() {
     </form>
 
     {error && <div className="syllabus-error" role="alert">{error}</div>}
-    <div className="syllabus-note">Class 8 Mathematics has a provisional chapter-title comparison. Other classes and subjects are available for PDF retrieval while their topic maps are prepared.</div>
+    <div className="syllabus-note">Python extracts selectable PDF text and flags scanned books that need OCR. Class 8 Mathematics also has a provisional chapter-title comparison.</div>
 
     {(searched || loading) && <div className="syllabus-results" aria-live="polite">
       {[homeState, destinationState].map((state, index) => {
@@ -121,10 +143,25 @@ export default function SyllabusLookup() {
             <div><span className="section-kicker">{index === 0 ? 'Home curriculum' : 'Destination curriculum'}</span><h2>{state}</h2></div>
             <span className="syllabus-result-count">{documents.length} {documents.length === 1 ? 'PDF' : 'PDFs'}</span>
           </div>
-          <DocumentList documents={documents} state={state} loading={loading} />
+          <DocumentList documents={documents} state={state} loading={loading} extractingId={extractingId} onExtract={handleExtract} />
         </section>;
       })}
     </div>}
+
+    {extractionError && <div className="syllabus-error" role="alert">{extractionError}</div>}
+    {extraction && <section className="syllabus-extraction" aria-live="polite">
+      <div className="syllabus-extraction-heading">
+        <div><span className="section-kicker">Python PDF text extraction</span><h2>{extraction.document.title}</h2></div>
+        <span className={`syllabus-extraction-status ${extraction.status}`}>
+          {extraction.status === 'ocr_required' ? <AlertTriangle size={15} /> : <Check size={15} />}
+          {extraction.status === 'ocr_required' ? 'OCR required' : 'Text extracted'}
+        </span>
+      </div>
+      <p>{extraction.status === 'ocr_required'
+        ? `No selectable text was found in the first ${extraction.checkedPageCount} pages. OCR is needed before these pages can be compared.`
+        : `Found ${extraction.totalCharacters.toLocaleString()} characters across ${extraction.textPageCount} of ${extraction.checkedPageCount} inspected pages (${extraction.pageCount} pages total).`}</p>
+      {extraction.status !== 'ocr_required' && <pre>{extraction.pages.filter(page => page.text).slice(0, 3).map(page => `Page ${page.page}\n${page.text}`).join('\n\n').slice(0, 5000)}</pre>}
+    </section>}
 
     {searched && <div className="syllabus-analyze-action">
       <button className="primary-button" type="button" onClick={handleAnalyze} disabled={analyzing || loading || !getDocumentsFor(homeState).length || !getDocumentsFor(destinationState).length}>

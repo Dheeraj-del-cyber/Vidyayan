@@ -16,12 +16,24 @@
 .syllabus-result-heading h2{margin:4px 0 0;font-size:20px;line-height:1.25}
 .syllabus-result-count{color:#697870;font-size:12px;white-space:nowrap}
 .syllabus-document-list{list-style:none;margin:0;padding:0}
-.syllabus-document{display:grid;grid-template-columns:22px minmax(0,1fr) 34px;align-items:center;gap:11px;padding:14px 0;border-bottom:1px solid #e8ece8;color:#53645a}
+.syllabus-document{display:grid;grid-template-columns:22px minmax(0,1fr) auto 34px;align-items:center;gap:11px;padding:14px 0;border-bottom:1px solid #e8ece8;color:#53645a}
 .syllabus-document-copy{display:grid;gap:5px;min-width:0}
 .syllabus-document-copy strong{overflow-wrap:anywhere;color:#293831;font-size:13px;font-weight:650;line-height:1.4}
 .syllabus-document-copy span{color:#77837c;font-size:11px;line-height:1.4}
 .syllabus-document>a{display:grid;place-items:center;width:34px;height:34px;border:1px solid #dfe5de;border-radius:4px;color:#3b6553;background:#fff}
 .syllabus-document>a:hover{background:#eef4ef}
+.syllabus-document-actions{display:flex;justify-content:flex-end}
+.syllabus-extract-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 9px;border:1px solid #dfe7e1;border-radius:4px;background:#fff;color:#476353;font:inherit;font-size:11px;font-weight:650;white-space:nowrap}
+.syllabus-extract-button:hover:not(:disabled){background:#f0f7f2}
+.syllabus-extract-button:disabled{opacity:.65;cursor:wait}
+.syllabus-extraction{margin-top:24px;padding-top:18px;border-top:1px solid #dfe6e0}
+.syllabus-extraction-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.syllabus-extraction-heading h2{margin:4px 0 0;font-size:18px;overflow-wrap:anywhere}
+.syllabus-extraction-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;white-space:nowrap}
+.syllabus-extraction-status.text_extracted{color:#356b4d}
+.syllabus-extraction-status.ocr_required{color:#94600f}
+.syllabus-extraction>p{margin:10px 0 12px;color:#697870;font-size:12px;line-height:1.55}
+.syllabus-extraction pre{max-height:280px;overflow:auto;margin:0;padding:13px;border:1px solid #e1e9e3;border-radius:4px;background:#f8fbf9;color:#3f5147;font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
 .syllabus-empty{margin:0;padding:18px 0;color:#718077;font-size:13px;line-height:1.5}
 .syllabus-error{margin-top:15px;color:#a33d35;font-size:13px}
 .syllabus-analyze-action{display:flex;justify-content:flex-end;margin-top:19px}
@@ -48,4 +60,4 @@
 .syllabus-potential-gaps li svg{flex:none}
 .syllabus-review-note{margin-top:17px;padding:12px 13px;border-left:3px solid #d6a443;background:#f7f7f2;color:#59675f;font-size:11px;line-height:1.6}
 @media(max-width:800px){.syllabus-search{grid-template-columns:1fr 24px 1fr}.syllabus-search label:nth-of-type(3),.syllabus-search label:nth-of-type(4){grid-row:2}.syllabus-search .primary-button{grid-column:1/-1}.syllabus-results{gap:20px}}
-@media(max-width:600px){.syllabus-page{padding-top:4px}.syllabus-heading{align-items:flex-start;flex-direction:column;gap:14px;margin-bottom:19px}.syllabus-heading h1{font-size:26px}.syllabus-search{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);gap:10px}.syllabus-search label:nth-of-type(3),.syllabus-search label:nth-of-type(4){grid-column:span 3;grid-row:auto}.syllabus-search .primary-button{grid-column:span 3}.syllabus-results{grid-template-columns:1fr;gap:26px}.syllabus-gap-heading{align-items:flex-start;flex-direction:column}.syllabus-alignment{grid-template-columns:112px minmax(0,1fr);gap:10px}.syllabus-potential-gaps ul{grid-template-columns:1fr}}
+@media(max-width:600px){.syllabus-page{padding-top:4px}.syllabus-heading{align-items:flex-start;flex-direction:column;gap:14px;margin-bottom:19px}.syllabus-heading h1{font-size:26px}.syllabus-search{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);gap:10px}.syllabus-search label:nth-of-type(3),.syllabus-search label:nth-of-type(4){grid-column:span 3;grid-row:auto}.syllabus-search .primary-button{grid-column:span 3}.syllabus-results{grid-template-columns:1fr;gap:26px}.syllabus-gap-heading,.syllabus-extraction-heading{align-items:flex-start;flex-direction:column}.syllabus-alignment{grid-template-columns:112px minmax(0,1fr);gap:10px}.syllabus-potential-gaps ul{grid-template-columns:1fr}.syllabus-document{grid-template-columns:20px minmax(0,1fr) 34px;gap:8px}.syllabus-document-actions{grid-column:2;justify-content:flex-start}.syllabus-document>a{grid-column:3;grid-row:1/3}}
