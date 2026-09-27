@@ -13,7 +13,8 @@ import { useLanguage, interfaceLanguages } from './i18n';
 import { indianStates } from './indianStates';
 import StudentDashboard from './StudentDashboard';
 import AddStudent from './AddStudent';
-import StudentAnalysis from './StudentAnalysis';
+import StudentAnalysis, { StudentAnalysisView } from './StudentAnalysis';
+import { getStudents } from './studentsStore';
 import StudyRoutine from './StudyRoutine';
 import Profile from './Profile';
 import SyllabusLookup from './SyllabusLookup';
@@ -107,7 +108,37 @@ function Field({ label, placeholder, type = 'text', select, options, wide }) { r
 
 function ChildProfile() { const navigate = useNavigate(); const child = children[0]; return <><button className="back-link" onClick={() => navigate('/children')}><ArrowRight size={15} className="back-arrow" /> Back to children</button><div className="profile-hero"><div className="profile-hero-main"><Avatar child={child} /><div><span className="eyebrow">Learning profile</span><h1>{child.name}</h1><p>{child.className} <span>·</span> {child.age} years <span>·</span> {child.language}</p></div></div><button className="secondary-button" onClick={() => navigate('/curriculum-gap')}><Target size={17} /> View curriculum gap</button></div><div className="profile-route"><div><span className="section-kicker">Home state</span><strong>{child.homeState}</strong></div><ArrowRight size={20} /><div><span className="section-kicker">Current state</span><strong>{child.currentState}</strong></div><span className="route-status"><span /> Record up to date</span></div><div className="profile-grid"><section className="panel"><div className="panel-heading"><div><span className="section-kicker">At a glance</span><h2>Learning summary</h2></div></div><div className="summary-grid"><div><span>Subjects</span><strong>4</strong></div><div><span>Completed chapters</span><strong>18</strong></div><div><span>Learning progress</span><strong>68%</strong></div><div><span>Identified gaps</span><strong className="highlight-number">2</strong></div></div><div className="current-learning"><div className="lesson-thumb"><BookOpen size={22} /></div><div className="lesson-copy"><span className="section-kicker">Currently learning</span><h3>Mathematics · Chapter 4</h3><p>Fractions and decimal numbers</p></div><div className="lesson-progress"><strong>70%</strong><ProgressBar value={70} /><button className="text-button" onClick={() => navigate('/learning/lesson')}>Continue <ArrowRight size={15} /></button></div></div></section><section className="panel mini-timeline"><div className="panel-heading"><div><span className="section-kicker">The journey so far</span><h2>Migration timeline</h2></div><button className="icon-button" onClick={() => navigate('/migration-history')}><ArrowRight size={17} /></button></div>{timeline.slice(0, 3).map((item, i) => <div className={`timeline-item ${item.active ? 'current' : ''}`} key={item.date}><span className="timeline-dot" /><div><small>{item.date}</small><strong>{item.title}</strong><span>{item.text}</span></div></div>)}</section></div></>; }
 
-function CurriculumGap() { return <SyllabusLookup />; }
+function CurriculumGap() {
+  const navigate = useNavigate();
+  const students = getStudents();
+  const [selectedId, setSelectedId] = useState(students[students.length - 1]?.id || '');
+  const [tab, setTab] = useState('students');
+  const selected = students.find(s => s.id === selectedId) || students[students.length - 1];
+
+  return <>
+    <PageIntro
+      eyebrow="Bridge what's different"
+      title="Curriculum gap"
+      content="The same per-student analysis you see right after adding a student, always here under the menu."
+      action={<button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add student</button>}
+    />
+    <div className="curriculum-gap-tabs">
+      <button className={tab === 'students' ? 'active' : ''} onClick={() => setTab('students')}><Users size={15} /> Student reports</button>
+      <button className={tab === 'syllabus' ? 'active' : ''} onClick={() => setTab('syllabus')}><BookOpen size={15} /> Syllabus PDF lookup</button>
+    </div>
+    {tab === 'students' ? (
+      students.length ? <>
+        {students.length > 1 && <div className="student-picker">
+          {students.map(s => <button key={s.id} className={s.id === selected?.id ? 'active' : ''} onClick={() => setSelectedId(s.id)}>{s.name}</button>)}
+        </div>}
+        {selected && <StudentAnalysisView student={selected} />}
+      </> : <div className="curriculum-gap-empty">
+        <p>No students added yet. Add a student to see their curriculum gap analysis here.</p>
+        <button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add student</button>
+      </div>
+    ) : <SyllabusLookup />}
+  </>;
+}
 function GapReport({ onOpen }) { return <div className="gap-report"><div className="report-header"><div><span className="eyebrow">Analysis for Rahul Shetty</span><h2>What needs bridging</h2></div><span className="analysis-complete"><CheckCircle2 size={16} /> Analysis complete</span></div><div className="subject-comparison"><div className="subject-heading"><span className="subject-icon coral-bg"><BookOpen size={18} /></span><div><h3>Mathematics</h3><span>5 topics compared</span></div><span className="subject-count">2 gaps</span></div><div className="curriculum-columns"><div><span className="column-label">Home curriculum · Karnataka</span>{['Numbers', 'Addition', 'Subtraction', 'Multiplication', 'Fractions'].map(x => <span className="topic complete" key={x}><Check size={15} />{x}</span>)}</div><div><span className="column-label">Destination curriculum · Maharashtra</span>{['Numbers', 'Addition', 'Subtraction', 'Multiplication'].map(x => <span className="topic complete" key={x}><Check size={15} />{x}</span>)}{['Fractions', 'Decimals', 'Basic geometry'].map(x => <span className="topic gap" key={x}><AlertTriangle size={15} />{x}</span>)}</div></div></div><div className="gap-table"><div className="gap-table-head"><span>Subject</span><span>Topic</span><span>Status</span><span>Priority</span><span /></div>{gaps.map(gap => <button className="gap-table-row" key={gap.topic} onClick={gap.status === 'Missing' ? onOpen : undefined} aria-label={`${gap.topic} ${gap.status}`}><span>{gap.subject}</span><strong>{gap.topic}</strong><span className={`gap-status ${gap.status.toLowerCase()}`}>{gap.status === 'Missing' ? <AlertTriangle size={14} /> : <Clock3 size={14} />}{gap.status}</span><span className={`priority ${gap.priority.toLowerCase()}`}>{gap.priority}</span><ArrowRight size={16} /></button>)}</div></div>; }
 function GapDetails() { const navigate = useNavigate(); return <><button className="back-link" onClick={() => navigate('/curriculum-gap')}><ArrowRight size={15} className="back-arrow" /> Back to gap report</button><PageIntro eyebrow="Mathematics · Learning gap" title="Decimals" content="A small bridge now can make the next classroom feel familiar." action={<span className="bridge-label"><span /> Bridge required</span>} /><div className="gap-detail-grid"><section className="detail-main"><div className="why-card"><span className="section-kicker">Why this gap was identified</span><p>The destination curriculum introduces <strong>decimals</strong> before Rahul has completed the equivalent concept in the home curriculum.</p><div className="prerequisites"><span>Prerequisite concepts</span><div><span>Place value</span><span>Fractions</span><span>Number comparison</span></div></div></div><div className="chapter-list"><div className="panel-heading"><div><span className="section-kicker">Mathematics · Class 5</span><h2>Chapter sequence</h2></div></div>{['Numbers', 'Addition', 'Subtraction', 'Fractions', 'Decimals'].map((x, i) => <div className={`chapter-row ${i > 2 ? 'is-gap' : ''}`} key={x}><span className="chapter-number">0{i + 1}</span><span className="chapter-title">{x}</span><span className="chapter-state">{i > 2 ? <><AlertTriangle size={15} /> Learning gap</> : <><Check size={15} /> Completed</>}</span>{i > 2 && <button className="text-button" onClick={() => navigate('/learning/lesson')}>View gap <ArrowRight size={15} /></button>}</div>)}</div></section><aside className="bridge-card"><div className="bridge-card-icon"><Sparkles size={23} /></div><span className="section-kicker">Recommended next step</span><h2>Bridge this concept with a short lesson.</h2><p>One focused lesson, with audio and practice in Rahul's preferred language.</p><button className="primary-button full" onClick={() => navigate('/learning/lesson')}>Start bridge lesson <ArrowRight size={17} /></button></aside></div></>; }
 

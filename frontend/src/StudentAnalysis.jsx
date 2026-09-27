@@ -11,27 +11,20 @@ import { getStudent } from './studentsStore';
 // come straight from data.js's `gaps` array.
 const homeTopics = ['Numbers', 'Addition', 'Subtraction', 'Multiplication', 'Fractions'];
 
-export default function StudentAnalysis() {
-  const { state } = useLocation();
+// The actual student-detail + gap-report markup, split out from the routed
+// page below so it can also be reused on the Curriculum gap menu page
+// (App.jsx), which shows the same per-student analysis without needing a
+// /students/:id route param.
+export function StudentAnalysisView({ student, onBack }) {
   const navigate = useNavigate();
-  const { studentId } = useParams();
-  const student = (studentId && getStudent(studentId)) || state;
-
-  if (!student?.name) {
-    return <>
-      <p>No student details were found for this page.</p>
-      <button className="primary-button" onClick={() => navigate('/add-student')}>Add a student</button>
-    </>;
-  }
-
-  const { id, name, photo, className, age, previousState, currentState, migratedMonth, dailyStudyHours } = student;
+  const { id, name, photo, className, age, previousState, currentState, migratedMonth } = student;
   const mathGaps = gaps.filter(g => g.subject === 'Mathematics');
   const missingMathGaps = mathGaps.filter(g => g.status === 'Missing').length;
-  const studentKey = id || studentId;
+  const studentKey = id;
   const initials = name.trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase() || 'ST';
 
   return <>
-    <button className="back-link" onClick={() => navigate('/')}><ArrowRight size={15} className="back-arrow" /> Back to dashboard</button>
+    {onBack && <button className="back-link" onClick={onBack}><ArrowRight size={15} className="back-arrow" /> Back to dashboard</button>}
 
     <div className="profile-hero">
       <div className="profile-hero-main">
@@ -91,4 +84,20 @@ export default function StudentAnalysis() {
       </button>
     </div>
   </>;
+}
+
+export default function StudentAnalysis() {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const { studentId } = useParams();
+  const student = (studentId && getStudent(studentId)) || state;
+
+  if (!student?.name) {
+    return <>
+      <p>No student details were found for this page.</p>
+      <button className="primary-button" onClick={() => navigate('/add-student')}>Add a student</button>
+    </>;
+  }
+
+  return <StudentAnalysisView student={student} onBack={() => navigate('/')} />;
 }
