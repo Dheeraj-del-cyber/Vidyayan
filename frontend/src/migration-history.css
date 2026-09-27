@@ -44,7 +44,7 @@ section.history-timeline{max-width:1020px;margin:0 auto}
 .history-item-2 .history-marker,.history-item-3 .history-marker{right:-16px}
 .history-item.is-visible .history-marker{box-shadow:0 0 0 3px rgba(83,160,133,.12)}
 .history-item.active.is-visible .history-marker{box-shadow:0 0 0 4px rgba(232,117,93,.16)}
-.history-curve .history-card{padding:15px 18px 14px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 18px rgba(42,57,48,.035)}
+.history-curve .history-card{padding:26px 26px 20px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 18px rgba(42,57,48,.035)}
 .history-item.active .history-card{border-color:#efc5b9;box-shadow:0 7px 22px rgba(190,102,79,.08)}
 .history-card-meta{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .history-kind{flex:none;padding:5px 8px;color:#537468;background:#edf4ef;border-radius:4px;font-size:9px;font-weight:700}
