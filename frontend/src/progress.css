@@ -1,0 +1,502 @@
+/* Progress Page & Liquid Wave Graph CSS */
+
+.progress-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Liquid Hero Banner */
+/* Liquid Hero Banner (Very Light Orange Palette) */
+.liquid-hero-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  background: linear-gradient(135deg, #fff5ee 0%, #ffebd9 100%);
+  border: 1px solid #fcd7c9;
+  border-radius: 20px;
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(232, 117, 93, 0.08);
+}
+
+@media (min-width: 850px) {
+  .liquid-hero-banner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.hero-copy-cluster {
+  max-width: 540px;
+}
+
+.hero-copy-cluster .section-kicker {
+  color: var(--coral);
+  font-weight: 800;
+}
+
+.hero-copy-cluster h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  color: var(--ink);
+  margin: 6px 0 10px 0;
+  letter-spacing: -0.8px;
+}
+
+.hero-copy-cluster p {
+  margin: 0 0 24px 0;
+  color: #6a7973;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.hero-metrics-grid {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-metric-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid #fcd7c9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(232, 117, 93, 0.06);
+}
+
+.hero-metric-pill div {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-metric-pill strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.hero-metric-pill span {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pill-icon.flame { color: #f97316; }
+.pill-icon.award { color: #0284c7; }
+.pill-icon.clock { color: #d97706; }
+
+/* Liquid Wave Gauge Circular Card */
+.liquid-gauge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-none: initial;
+}
+
+.liquid-gauge-card {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #fcd7c9;
+  box-shadow: 0 8px 24px rgba(232, 117, 93, 0.15);
+  padding: 8px;
+}
+
+.liquid-gauge-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff0eb;
+}
+
+/* Liquid Fill & Moving Wave Animation */
+.liquid-fill-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, #e8755d 0%, #c9563e 100%);
+  transition: height 0.6s ease;
+}
+
+.liquid-wave {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  width: 200%;
+  height: 30px;
+  fill: #e8755d;
+}
+
+.liquid-wave.wave-one {
+  opacity: 0.8;
+  animation: waveMoveOne 6s linear infinite;
+}
+
+.liquid-wave.wave-two {
+  opacity: 0.5;
+  top: -18px;
+  animation: waveMoveTwo 4s linear infinite;
+  fill: #f59f8c;
+}
+
+@keyframes waveMoveOne {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes waveMoveTwo {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Floating Micro Bubbles */
+.liquid-bubble {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: floatBubble 3s ease-in-out infinite;
+}
+
+.liquid-bubble.b1 { width: 8px; height: 8px; left: 25%; bottom: 10%; animation-duration: 2.8s; }
+.liquid-bubble.b2 { width: 12px; height: 12px; left: 55%; bottom: 20%; animation-duration: 3.5s; animation-delay: 0.5s; }
+.liquid-bubble.b3 { width: 6px; height: 6px; left: 75%; bottom: 15%; animation-duration: 2.2s; animation-delay: 1s; }
+
+@keyframes floatBubble {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-70px) scale(1.2); opacity: 0; }
+}
+
+.liquid-gauge-center {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.liquid-gauge-center strong {
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.liquid-gauge-center strong span {
+  font-size: 20px;
+}
+
+.liquid-gauge-center small {
+  font-size: 10px;
+  color: #d1e3dd;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* Moving Liquid SVG Graph Section */
+.moving-graph-section {
+  background: #ffffff;
+  border: 1px solid #dce8e1;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.graph-header-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+@media (min-width: 768px) {
+  .graph-header-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.graph-header-bar h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  margin: 4px 0 0 0;
+  color: #285b49;
+}
+
+.graph-controls-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.graph-stat-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #f4faf6;
+  border: 1px solid #dce9e1;
+  border-radius: 7px;
+  font-size: 12px;
+  color: #65776d;
+}
+
+.graph-stat-badge strong {
+  color: #287b64;
+}
+
+.graph-subject-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.graph-tab {
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f8fbf9;
+  border: 1px solid #dce8e1;
+  color: #65776d;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.graph-tab:hover {
+  background: #eff7f2;
+  color: #285b49;
+}
+
+.graph-tab.active {
+  background: #e4f2e9;
+  color: #245d49;
+  border-color: #9fcbb0;
+}
+
+/* SVG Chart Container */
+.svg-graph-card {
+  background: #fbfdfb;
+  border: 1px solid #e1ebe4;
+  border-radius: 11px;
+  padding: 20px 14px 12px;
+  overflow-x: auto;
+}
+
+.svg-graph-container {
+  min-width: 600px;
+}
+
+.liquid-svg-chart {
+  width: 100%;
+  height: 260px;
+}
+
+.chart-grid-line {
+  stroke: #e8efea;
+  stroke-dasharray: 2 5;
+}
+
+/* Animated Path Drawing */
+.animated-draw-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawGraphLine 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animated-fade-in {
+  animation: fadeInArea 1s ease forwards;
+}
+
+@keyframes drawGraphLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fadeInArea {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.liquid-area-path {
+  transition: d 0.5s ease;
+}
+
+.liquid-animated-line {
+  transition: d 0.5s ease, stroke 0.5s ease;
+}
+
+.graph-point-group {
+  cursor: pointer;
+}
+
+.point-pulse-ring {
+  animation: pulseNodeRing 2.4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+@keyframes pulseNodeRing {
+  0% { r: 6; opacity: 0.45; }
+  50% { r: 15; opacity: 0.12; }
+  100% { r: 20; opacity: 0; }
+}
+
+.point-circle-outer {
+  transition: r 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), stroke-width 0.2s ease;
+}
+
+.graph-point-group:hover .point-circle-outer {
+  r: 9;
+  stroke-width: 4;
+}
+
+/* Floating Tooltip */
+.tooltip-group {
+  animation: popTooltip 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popTooltip {
+  from {
+    opacity: 0;
+    transform: translate(0, -20px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -32px) scale(1);
+  }
+}
+
+.tooltip-box {
+  stroke: #bfddcd;
+  stroke-width: 1;
+}
+
+/* Subject Grid & Liquid Bars */
+.subject-cards-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title-bar h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  margin: 4px 0 0 0;
+}
+
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .subject-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .subject-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.subject-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(36, 50, 47, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.subject-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(36, 50, 47, 0.07);
+}
+
+.subject-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.subject-percentage {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.subject-card h3 {
+  font-size: 15px;
+  margin: 0 0 4px 0;
+}
+
+.subject-card p {
+  margin: 0 0 16px 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Liquid Progress Bar Track */
+.liquid-progressbar-track {
+  height: 8px;
+  background: #edf1ed;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.liquid-progressbar-fill {
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.liquid-progressbar-fill.coral { background: linear-gradient(90deg, #f87171 0%, #e8755d 100%); }
+.liquid-progressbar-fill.teal { background: linear-gradient(90deg, #2dd4bf 0%, #4f9b8f 100%); }
+.liquid-progressbar-fill.blue { background: linear-gradient(90deg, #60a5fa 0%, #6489bc 100%); }
+.liquid-progressbar-fill.yellow { background: linear-gradient(90deg, #facc15 0%, #d9a936 100%); }
+
+.liquid-bar-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: liquidShimmer 2s infinite;
+}
+
+@keyframes liquidShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.status-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--teal);
+  font-size: 13px;
+}
