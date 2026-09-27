@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, ChevronDown, ChevronUp, Play, Check, HelpCircle, Calendar, Sparkles, BookOpen, Clock, Award } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Play, Check, HelpCircle, Calendar, Sparkles, BookOpen, Clock, Award, Lock, ShieldAlert, PlayCircle, Eye } from 'lucide-react';
 import './daily-tasks.css';
 
 // Initial sample task dataset keyed by dates
@@ -19,7 +19,7 @@ const initialDatesData = [
         video: {
           id: 'video-101',
           title: 'Decimal Place Value & Concept',
-          youtubeId: 'KG6ILNOiMgM', // Clean math lesson
+          youtubeId: 'KG6ILNOiMgM',
           duration: '8 mins',
           summary: 'Watch this short video tutorial to understand how decimals represent parts of a whole.'
         },
@@ -176,15 +176,88 @@ export default function DailyTasks() {
   // Track quiz submission feedback state: { "task-101": { submitted: true, isCorrect: true } }
   const [quizFeedback, setQuizFeedback] = useState({});
 
+  // Strict video watch state: { [taskId]: { started: true, totalSec: 480, secondsLeft: 480, unlocked: false } }
+  const [videoWatchState, setVideoWatchState] = useState({});
+  // Warning notice if user tries to skip video: taskId
+  const [strictWarningTaskId, setStrictWarningTaskId] = useState(null);
+
   const currentDay = initialDatesData[activeDateIndex];
+
+  // Helper to parse duration string (e.g. "8 mins") into seconds
+  const parseDurationInSeconds = (durationStr) => {
+    if (!durationStr) return 480;
+    const match = durationStr.match(/(\d+)/);
+    if (match) {
+      return parseInt(match[1], 10) * 60;
+    }
+    return 480;
+  };
+
+  // Helper to format seconds into "Xm Ys" format
+  const formatTimeLeft = (sec) => {
+    if (sec <= 0) return '0s';
+    const mins = Math.floor(sec / 60);
+    const secs = sec % 60;
+    if (mins > 0) {
+      return `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+    }
+    return `${secs}s`;
+  };
 
   // Helper to check if a specific subtask is done
   const isSubtaskDone = (taskId, subtaskType) => {
     return Boolean(completedSubtasks[`${taskId}-${subtaskType}`]);
   };
 
-  // Toggle video completed state
+  // Start watching video with strict timer countdown for the full video duration
+  const handleStartVideo = (taskId, durationStr) => {
+    if (videoWatchState[taskId]?.started) return;
+    setStrictWarningTaskId(null);
+
+    const totalSec = parseDurationInSeconds(durationStr);
+
+    setVideoWatchState(prev => ({
+      ...prev,
+      [taskId]: { started: true, totalSec, secondsLeft: totalSec, unlocked: false }
+    }));
+
+    let currentSec = totalSec;
+    const timer = setInterval(() => {
+      currentSec -= 1;
+      if (currentSec <= 0) {
+        clearInterval(timer);
+        setVideoWatchState(prev => ({
+          ...prev,
+          [taskId]: { started: true, totalSec, secondsLeft: 0, unlocked: true }
+        }));
+      } else {
+        setVideoWatchState(prev => ({
+          ...prev,
+          [taskId]: { ...prev[taskId], secondsLeft: currentSec }
+        }));
+      }
+    }, 1000);
+  };
+
+  // Fast forward video watch time for demo/testing purposes
+  const handleFastForwardVideo = (taskId) => {
+    setVideoWatchState(prev => ({
+      ...prev,
+      [taskId]: { ...prev[taskId], secondsLeft: 0, unlocked: true }
+    }));
+  };
+
+  // Toggle video completed state (with strict check)
   const handleToggleVideo = (taskId) => {
+    const isAlreadyDone = isSubtaskDone(taskId, 'video');
+    const isUnlocked = videoWatchState[taskId]?.unlocked;
+
+    if (!isAlreadyDone && !isUnlocked) {
+      setStrictWarningTaskId(taskId);
+      return;
+    }
+
+    setStrictWarningTaskId(null);
     const key = `${taskId}-video`;
     setCompletedSubtasks(prev => ({
       ...prev,
@@ -231,14 +304,20 @@ export default function DailyTasks() {
 
   return (
     <section className="daily-tasks-section" aria-label="Daily Tasks and Study Plan">
+      {/* Sleek Compact Header Bar */}
       <div className="daily-tasks-header">
         <div className="daily-tasks-title-group">
-          <span className="eyebrow"><Calendar size={13} /> Schedule &amp; Daily Tasks</span>
-          <h2>Interactive Daily Study Tasks</h2>
-          <p>Complete your video lessons and quizzes to earn daily learning tick bars!</p>
+          <h2><Calendar size={18} /> Daily Study Tasks</h2>
+          <span className="day-progress-text">
+            {completedTaskCount === dayTaskCount ? (
+              <span className="completion-tick-pill"><CheckCircle2 size={13} /> Day Complete!</span>
+            ) : (
+              <span>{completedTaskCount}/{dayTaskCount} completed</span>
+            )}
+          </span>
         </div>
 
-        {/* Date Tabs */}
+        {/* Compact Date Tabs */}
         <div className="date-tabs-container">
           {initialDatesData.map((dayItem, idx) => {
             const dayCompletedCount = dayItem.tasks.filter(t => isTaskCompleted(t.id)).length;
@@ -258,9 +337,8 @@ export default function DailyTasks() {
                 }}
               >
                 <span className="date-tab-day">{dayItem.dayName}</span>
-                <span className="date-tab-date">{dayItem.formattedDate}</span>
-                <span className={`date-tab-badge ${isAllDone ? 'badge-completed' : ''}`}>
-                  {isAllDone ? <Check size={12} /> : `${dayCompletedCount}/${dayItem.tasks.length}`}
+                <span className="date-tab-badge">
+                  {isAllDone ? <Check size={11} /> : `${dayCompletedCount}/${dayItem.tasks.length}`}
                 </span>
               </button>
             );
@@ -268,29 +346,12 @@ export default function DailyTasks() {
         </div>
       </div>
 
-      {/* Day Completion Tick / Progress Bar */}
-      <div className="day-progress-bar-card">
-        <div className="day-progress-info">
-          <div className="day-progress-label">
-            <Sparkles size={16} className="sparkle-icon" />
-            <span>Progress for <strong>{currentDay.dayName} ({currentDay.formattedDate})</strong></span>
-          </div>
-          <div className="day-progress-status">
-            {completedTaskCount === dayTaskCount ? (
-              <span className="completion-tick-pill">
-                <CheckCircle2 size={16} /> Day Completed!
-              </span>
-            ) : (
-              <span className="progress-count-text">{completedTaskCount} of {dayTaskCount} tasks completed</span>
-            )}
-          </div>
-        </div>
-        <div className="tick-progress-track">
-          <div
-            className={`tick-progress-fill ${completedTaskCount === dayTaskCount ? 'complete' : ''}`}
-            style={{ width: `${dayProgressPercent}%` }}
-          />
-        </div>
+      {/* Sleek Thin Progress Bar */}
+      <div className="compact-progress-strip">
+        <div
+          className={`compact-progress-fill ${completedTaskCount === dayTaskCount ? 'complete' : ''}`}
+          style={{ width: `${dayProgressPercent}%` }}
+        />
       </div>
 
       {/* Task List (Expandable Cards) */}
@@ -361,7 +422,7 @@ export default function DailyTasks() {
                   <p className="task-description">{task.description}</p>
 
                   <div className="subtasks-container">
-                    {/* Subtask 1: YouTube Video Lesson */}
+                    {/* Subtask 1: YouTube Video Lesson (Strict Mode) */}
                     <div className={`subtask-box ${videoDone ? 'subtask-done' : ''}`}>
                       <div className="subtask-header">
                         <div className="subtask-title">
@@ -375,26 +436,92 @@ export default function DailyTasks() {
 
                       <p className="subtask-summary">{task.video.summary}</p>
 
-                      {/* YouTube Video Player Embed */}
+                      {/* Strict Mode Alert Banner */}
+                      {strictWarningTaskId === task.id && !videoDone && (
+                        <div className="strict-warning-banner">
+                          <ShieldAlert size={18} />
+                          <div>
+                            <strong>Strict Verification Mode Active</strong>
+                            <span>You must start and watch the video lesson before you can mark it complete!</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* YouTube Video Player Embed with Strict Watch Trigger */}
                       <div className="youtube-embed-wrapper">
-                        <iframe
-                          src={`https://www.youtube-nocookie.com/embed/${task.video.youtubeId}`}
-                          title={task.video.title}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="youtube-iframe"
-                        />
+                        {/* If video watch hasn't started yet, show Start Watch Overlay */}
+                        {!videoWatchState[task.id]?.started && !videoDone ? (
+                          <div className="video-start-overlay" onClick={() => handleStartVideo(task.id, task.video.duration)}>
+                            <PlayCircle size={56} className="play-overlay-icon" />
+                            <strong>Click to Play &amp; Watch Full Lesson ({task.video.duration})</strong>
+                            <span>Strict mode: Full video duration required to unlock completion</span>
+                          </div>
+                        ) : (
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${task.video.youtubeId}?autoplay=1`}
+                            title={task.video.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="youtube-iframe"
+                          />
+                        )}
                       </div>
 
+                      {/* Video Watch Live Status Bar with Full Countdown & Progress Track */}
+                      {!videoDone && videoWatchState[task.id]?.started && (
+                        <div className={`video-timer-status ${videoWatchState[task.id]?.unlocked ? 'unlocked' : 'watching'}`}>
+                          {videoWatchState[task.id]?.unlocked ? (
+                            <span className="timer-unlocked-text"><Check size={14} /> Full Video Verified! Button Unlocked</span>
+                          ) : (
+                            <div className="video-watch-progress-box">
+                              <div className="video-watch-status-top">
+                                <span className="timer-countdown-text">
+                                  <Eye size={14} className="spin" /> Watching Video... ({formatTimeLeft(videoWatchState[task.id]?.secondsLeft)} remaining of {task.video.duration})
+                                </span>
+                                <button
+                                  type="button"
+                                  className="demo-fast-forward-btn"
+                                  onClick={() => handleFastForwardVideo(task.id)}
+                                  title="Fast-forward timer for quick demo testing"
+                                >
+                                  ⚡ Skip to End (Demo)
+                                </button>
+                              </div>
+                              <div className="video-progress-mini-track">
+                                <div
+                                  className="video-progress-mini-fill"
+                                  style={{
+                                    width: `${Math.round(((videoWatchState[task.id]?.totalSec - videoWatchState[task.id]?.secondsLeft) / videoWatchState[task.id]?.totalSec) * 100)}%`
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       <div className="subtask-actions">
-                        <button
-                          type="button"
-                          className={`subtask-complete-btn ${videoDone ? 'done' : ''}`}
-                          onClick={() => handleToggleVideo(task.id)}
-                        >
-                          <CheckCircle2 size={16} />
-                          {videoDone ? 'Video Watched ✓' : 'Mark Video as Watched'}
-                        </button>
+                        {videoDone ? (
+                          <button
+                            type="button"
+                            className="subtask-complete-btn done"
+                            onClick={() => handleToggleVideo(task.id)}
+                          >
+                            <CheckCircle2 size={16} /> Video Watched ✓
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className={`subtask-complete-btn ${videoWatchState[task.id]?.unlocked ? 'unlocked-btn' : 'locked-btn'}`}
+                            onClick={() => handleToggleVideo(task.id)}
+                          >
+                            {videoWatchState[task.id]?.unlocked ? (
+                              <><CheckCircle2 size={16} /> Mark Video as Watched</>
+                            ) : (
+                              <><Lock size={15} /> Locked (Watch Video First)</>
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
 

@@ -9,7 +9,12 @@
 .student-flash-info{display:grid;gap:3px;flex:1;min-width:0}
 .student-flash-info strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .student-flash-info span{font-size:11px;color:var(--muted)}
+.student-flash-actions{display:flex;align-items:center;gap:6px;flex:none}
 .student-flash-edit{display:flex;align-items:center;gap:5px;flex:none;padding:7px 11px;font-size:11px;font-weight:700;color:var(--coral);background:var(--coral-soft);border-radius:20px}
+.student-flash-delete{display:flex;align-items:center;gap:4px;padding:7px 11px;font-size:11px;font-weight:700;color:#dc2626;background:#fef2f2;border-radius:20px;transition:background 0.15s ease}
+.student-flash-delete:hover{background:#fee2e2}
+.danger-button{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 16px;border-radius:7px;font-size:12px;font-weight:700;background:#dc2626;color:#ffffff;transition:background 0.15s ease}
+.danger-button:hover{background:#b91c1c}
 .field-hint{font-size:11px;color:var(--muted);margin:-8px 0 14px;line-height:1.5}
 .hours-block{margin-top:22px}
 .hours-block-label{display:block;font-size:11px;font-weight:700;margin-bottom:6px}

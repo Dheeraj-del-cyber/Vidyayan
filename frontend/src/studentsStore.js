@@ -40,6 +40,12 @@ export function saveStudent(student) {
   return student;
 }
 
+export function deleteStudent(id) {
+  const students = readAll().filter(s => s.id !== id);
+  writeAll(students);
+  return students;
+}
+
 export function makeStudentId() {
   return typeof crypto !== 'undefined' && crypto.randomUUID
     ? crypto.randomUUID()
