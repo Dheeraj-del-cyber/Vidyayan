@@ -1,5 +1,7 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Download, Printer } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import { useRef } from 'react';
 import { gaps } from './data';
 import { getStudent } from './studentsStore';
 import DailyTasks from './DailyTasks';
@@ -22,8 +24,30 @@ export default function StudyRoutine() {
   const { studentId } = useParams();
   const student = (studentId && getStudent(studentId)) || state;
   const name = student?.name;
+  const scheduleRef = useRef(null);
 
   const dailyStudyHours = student?.dailyStudyHours || {};
+
+  const exportPdf = () => {
+    window.print();
+  };
+
+  const exportImage = async () => {
+    const table = scheduleRef.current;
+    if (!table) return;
+
+    const canvas = await html2canvas(table, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#fffaf5',
+      logging: false,
+    });
+
+    const link = document.createElement('a');
+    link.download = `${(name || 'study-routine').replace(/\s+/g, '-').toLowerCase()}-timetable.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
 
   const rows = weekdays.map((day, i) => {
     const saved = dailyStudyHours[day];
@@ -43,26 +67,33 @@ export default function StudyRoutine() {
     <button className="back-link" onClick={() => studentId ? navigate(`/students/${studentId}`) : navigate(-1)}><ArrowRight size={15} className="back-arrow" /> Back to student details</button>
     <div className="page-intro"><div><div className="eyebrow">{name ? `For ${name}` : 'Weekly plan'}</div><h1>Study routine</h1><p>Study hours from the daily routine timetable, two focus topics a day from the identified gaps.</p></div></div>
 
-    <table className="routine-table-wrap" aria-label="Study routine timetable">
-      <thead>
-        <tr className="routine-table-head">
-          <th>Day</th>
-          <th>Study hours</th>
-          <th>Topic 1</th>
-          <th>Topic 2</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map(row => (
-          <tr className="routine-table-row" key={row.day}>
-            <td className="routine-day-name">{row.day}</td>
-            <td><span className="routine-pill routine-hours">{row.hours || '1 hr review'}</span></td>
-            <td><span className="routine-pill routine-topic">{row.topic1 || 'Reading practice'}</span></td>
-            <td><span className="routine-pill routine-topic alt">{row.topic2 || 'Practice session'}</span></td>
+    <div className="routine-actions">
+      <button className="secondary-button" type="button" onClick={exportPdf}><Printer size={16} /> Export PDF</button>
+      <button className="primary-button" type="button" onClick={exportImage}><Download size={16} /> Export image</button>
+    </div>
+
+    <div ref={scheduleRef} className="routine-table-panel">
+      <table className="routine-table-wrap" aria-label="Study routine timetable">
+        <thead>
+          <tr className="routine-table-head">
+            <th>Day</th>
+            <th>Study hours</th>
+            <th>Topic 1</th>
+            <th>Topic 2</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map(row => (
+            <tr className="routine-table-row" key={row.day}>
+              <td className="routine-day-name">{row.day}</td>
+              <td><span className="routine-pill routine-hours">{row.hours || '1 hr review'}</span></td>
+              <td><span className="routine-pill routine-topic">{row.topic1 || 'Reading practice'}</span></td>
+              <td><span className="routine-pill routine-topic alt">{row.topic2 || 'Practice session'}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
     <DailyTasks />
   </>;
