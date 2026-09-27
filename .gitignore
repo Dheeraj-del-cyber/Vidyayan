@@ -2,6 +2,7 @@ node_modules/
 dist/
 .env
 *.log
+/data/
 
 # SQLite database + its write-ahead-log files (generated at runtime)
 database/vidyayan.db
