@@ -80,7 +80,7 @@ export function StudentAnalysisView({ student, onBack }) {
 
     <div className="form-actions" style={{ justifyContent: 'flex-start', padding: '22px 0 0' }}>
       <button className="primary-button" onClick={() => navigate(studentKey ? `/students/${studentKey}/study-routine` : '/students/study-routine', { state: student })}>
-        <CalendarDays size={17} /> Generate schedule
+        <CalendarDays size={17} /> Open timetable
       </button>
     </div>
   </>;
