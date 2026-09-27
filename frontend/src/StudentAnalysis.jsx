@@ -20,7 +20,7 @@ export default function StudentAnalysis() {
     </>;
   }
 
-  const { name, photo, previousState, currentState } = state;
+  const { name, photo, previousState, currentState, dailyStudyHours } = state;
   const mathGaps = gaps.filter(g => g.subject === 'Mathematics');
   const initials = name.trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase() || 'ST';
 
@@ -62,7 +62,7 @@ export default function StudentAnalysis() {
     </div>
 
     <div className="form-actions" style={{ justifyContent: 'flex-start', padding: '22px 0 0' }}>
-      <button className="primary-button" onClick={() => navigate('/students/study-routine', { state: { name } })}>
+      <button className="primary-button" onClick={() => navigate('/students/study-routine', { state: { name, dailyStudyHours } })}>
         <Sparkles size={17} /> Study routine
       </button>
     </div>

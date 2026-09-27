@@ -1,6 +1,8 @@
-import { BookOpen, Gauge, Languages, MapPinned, Plus, Route as RouteIcon, Target } from 'lucide-react';
+import { BookOpen, Gauge, Languages, MapPinned, Pencil, Plus, Route as RouteIcon, Target, UserRound } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { getStudents } from './studentsStore';
 
 // Good morning / afternoon / evening / night, based on the time right now.
 function getGreeting() {
@@ -51,9 +53,32 @@ export default function StudentDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const firstName = (user?.name || 'there').trim().split(/\s+/)[0];
+  // Read on mount - this page remounts on every visit to "/", which is
+  // enough to pick up students saved or edited on the Add student page.
+  // Nothing is shown here beyond what was actually saved there.
+  const [students, setStudents] = useState(() => getStudents());
+  useEffect(() => { setStudents(getStudents()); }, []);
+
   return <div className="student-home">
     <div className="student-welcome"><div><span className="eyebrow">Your learning space · {getTodayLabel()}</span><h1>{getGreeting()}, {firstName}</h1><p>Your family may move, but your learning keeps moving with you.</p></div><button className="primary-button" onClick={() => navigate('/learning/lesson')}><BookOpen size={18} /> Continue learning</button></div>
     <FeatureTicker />
     <div className="add-student-row"><button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add Student</button></div>
+
+    {students.length > 0 && <section className="student-cards">
+      {students.map(student => (
+        <div className="student-flash-card" key={student.id}>
+          <span className="student-flash-avatar">
+            {student.photo ? <img src={student.photo} alt={student.name} /> : <UserRound size={20} />}
+          </span>
+          <div className="student-flash-info">
+            <strong>{student.name || 'Unnamed student'}</strong>
+            <span>{student.className || ''}</span>
+          </div>
+          <button className="student-flash-edit" onClick={() => navigate(`/add-student/${student.id}`)}>
+            <Pencil size={14} /> Edit
+          </button>
+        </div>
+      ))}
+    </section>}
   </div>;
 }
