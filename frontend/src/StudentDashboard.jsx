@@ -1,9 +1,9 @@
-import { BookOpen, Gauge, Languages, MapPinned, Pencil, Plus, Route as RouteIcon, Target, UserRound } from 'lucide-react';
+import { BookOpen, Gauge, Languages, MapPinned, Pencil, Plus, Route as RouteIcon, Target, Trash2, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import './student-details.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { getStudents } from './studentsStore';
+import { deleteStudent, getStudents } from './studentsStore';
 import DailyTasks from './DailyTasks';
 
 // Good morning / afternoon / evening / night, based on the time right now.
@@ -61,8 +61,16 @@ export default function StudentDashboard() {
   const [students, setStudents] = useState(() => getStudents());
   useEffect(() => { setStudents(getStudents()); }, []);
 
+  const handleDeleteStudent = (e, id, name) => {
+    e.stopPropagation();
+    if (window.confirm(`Are you sure you want to delete ${name || 'this student'}?`)) {
+      const updated = deleteStudent(id);
+      setStudents(updated);
+    }
+  };
+
   return <div className="student-home">
-    <div className="student-welcome"><div><span className="eyebrow">Your learning space · {getTodayLabel()}</span><h1>{getGreeting()}, {firstName}</h1><p>Your family may move, but your learning keeps moving with you.</p></div></div>
+    <div className="student-welcome"><div><span className="eyebrow">Your learning space · {getTodayLabel()}</span><h1>{getGreeting()}, {firstName}</h1></div></div>
     <FeatureTicker />
     <div className="add-student-row"><button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add Student</button></div>
 
@@ -76,9 +84,14 @@ export default function StudentDashboard() {
             <button type="button" className="student-flash-name" onClick={() => navigate(`/students/${student.id}`)}>{student.name || 'Unnamed student'}</button>
             <span>{student.className || ''}</span>
           </div>
-          <button className="student-flash-edit" onClick={() => navigate(`/add-student/${student.id}`)}>
-            <Pencil size={14} /> Edit
-          </button>
+          <div className="student-flash-actions">
+            <button className="student-flash-edit" onClick={() => navigate(`/add-student/${student.id}`)}>
+              <Pencil size={14} /> Edit
+            </button>
+            <button className="student-flash-delete" onClick={(e) => handleDeleteStudent(e, student.id, student.name)}>
+              <Trash2 size={14} /> Delete
+            </button>
+          </div>
         </div>
       ))}
     </section>}

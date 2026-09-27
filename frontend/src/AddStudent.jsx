@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Camera, Check, FileText, Image, UserRound, X } from 'lucide-react';
+import { Camera, Check, FileText, Image, Trash2, UserRound, X } from 'lucide-react';
 import { indianStates } from './indianStates';
-import { getStudent, makeStudentId, saveStudent } from './studentsStore';
+import { deleteStudent, getStudent, makeStudentId, saveStudent } from './studentsStore';
 
 const classOptions = Array.from({ length: 10 }, (_, i) => `Class ${i + 1}`);
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -95,6 +95,14 @@ export default function AddStudent() {
     navigate('/students/analysis', { state: student });
   };
 
+  const handleDelete = () => {
+    if (!studentId) return;
+    if (window.confirm(`Are you sure you want to delete ${name || 'this student'}?`)) {
+      deleteStudent(studentId);
+      navigate('/');
+    }
+  };
+
   return <>
     <button className="back-link" onClick={() => navigate('/')}><X size={15} /> Cancel</button>
     <div className="page-intro"><div><div className="eyebrow">{isEditing ? 'Update a learning record' : 'Build a learning record'}</div><h1>{isEditing ? 'Edit student' : 'Add student'}</h1><p>{isEditing ? "Update this student's details." : "Add a student's details so their learning record can travel with them."}</p></div></div>
@@ -158,7 +166,15 @@ export default function AddStudent() {
           </div>
         </section>
 
-        <div className="form-actions"><button type="button" className="quiet-button" onClick={() => navigate('/')}>Cancel</button><button className="primary-button" type="submit"><Check size={18} /> {isEditing ? 'Save changes' : 'Enter'}</button></div>
+        <div className="form-actions">
+          {isEditing && (
+            <button type="button" className="danger-button" onClick={handleDelete}>
+              <Trash2 size={16} /> Delete student
+            </button>
+          )}
+          <button type="button" className="quiet-button" onClick={() => navigate('/')}>Cancel</button>
+          <button className="primary-button" type="submit"><Check size={18} /> {isEditing ? 'Save changes' : 'Enter'}</button>
+        </div>
       </div>
 
       <aside className="form-aside">

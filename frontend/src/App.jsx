@@ -88,7 +88,7 @@ function App() {
   return <div className="app-shell"><div className={`sidebar-wrap ${menuOpen ? 'open' : ''}`}><Sidebar onClose={() => setMenuOpen(false)} /></div>{menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)} />}<div className="main-shell"><Header onMenu={() => setMenuOpen(true)} /><main className="main-content"><Routes><Route path="/" element={<StudentDashboard />} /><Route path="/add-student" element={<AddStudent />} /><Route path="/add-student/:studentId" element={<AddStudent />} /><Route path="/students/analysis" element={<StudentAnalysis />} /><Route path="/students/study-routine" element={<StudyRoutine />} /><Route path="/students/:studentId/study-routine" element={<StudyRoutine />} /><Route path="/students/:studentId" element={<StudentAnalysis />} /><Route path="/profile" element={<Profile />} /><Route path="/curriculum-gap" element={<CurriculumGap />} /><Route path="/gap-details" element={<GapDetails />} /><Route path="/learning" element={<Learning />} /><Route path="/learning/lesson" element={<Lesson />} /><Route path="/translation" element={<Translation />} /><Route path="/progress" element={<Progress />} /><Route path="/migration-history" element={<MigrationHistory />} /><Route path="/settings" element={<StudentSettings />} /></Routes></main><BottomNav /></div></div>;
 }
 
-function PageIntro({ eyebrow, title, children: content, action }) { const { t } = useLanguage(); return <div className="page-intro"><div><div className="eyebrow">{t(eyebrow)}</div><h1>{t(title)}</h1>{content && <p>{t(content)}</p>}</div>{action}</div>; }
+function PageIntro({ eyebrow, title, children: content, action }) { const { t } = useLanguage(); return <div className="page-intro"><div>{eyebrow && <div className="eyebrow">{t(eyebrow)}</div>}<h1>{t(title)}</h1>{content && <p>{t(content)}</p>}</div>{action}</div>; }
 function StatCard({ icon: Icon, label, value, note, tone }) { return <div className="stat-card"><div className={`stat-icon ${tone}`}><Icon size={19} /></div><div><span>{label}</span><strong>{value}</strong><small className={note?.startsWith('+') ? 'positive' : ''}>{note}</small></div><MoreHorizontal size={17} className="muted more" aria-hidden="true" /></div>; }
 function ProgressBar({ value, color = 'coral' }) { return <div className="progress-track"><span className={`progress-fill ${color}`} style={{ width: `${value}%` }} /></div>; }
 function Avatar({ child, small = false }) { return <span className={`avatar avatar-${child.color} ${small ? 'avatar-small' : ''}`}>{child.initials}</span>; }
@@ -175,7 +175,7 @@ function MigrationHistory() {
 
   const milestoneTypes = ['Origin state', 'Destination state', 'Learning continuity', 'Next transition'];
   return <>
-    <PageIntro eyebrow="Nothing gets lost in the move" title="Migration history" content="A continuous view of Rahul's learning journey across places and school years." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export history</button>} />
+    <PageIntro title="Migration history" content="A continuous view of Rahul's learning journey across places and school years." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export history</button>} />
     <section className="history-overview" aria-label="Migration route">
       <div className="history-overview-intro"><span className="section-kicker">Rahul's route · 2026-27</span><h2>Learning moves with him.</h2></div>
       <div className="history-states">
