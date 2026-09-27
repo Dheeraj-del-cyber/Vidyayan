@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import './migration-history.css';
 import { NavLink, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowRight, Bell, BookOpen, Check, ChevronDown, CircleHelp, FileText, Gauge,
   Headphones, Home, Languages, LayoutDashboard, Library, LogOut, Menu, MoreHorizontal,
-  Plus, Search, Settings, Sparkles, Target, UserRound, Users, X, MapPinned,
+  Plus, Search, Settings, Sparkles, Target, UserRound, Users, MapPinned,
   Play, Pause, Download, CheckCircle2, AlertTriangle, Clock3, Route as RouteIcon,
 } from 'lucide-react';
 import { activities, children, gaps, subjects, timeline } from './data';
@@ -35,7 +36,7 @@ function Brand() {
 function Sidebar({ onClose }) {
   const { t } = useLanguage();
   return <aside className="sidebar">
-    <div className="sidebar-top"><div className="brand-cluster"><Brand /><button className="icon-button close-menu" onClick={onClose} aria-label="Close navigation"><X size={18} /></button></div></div>
+    <div className="sidebar-top"><div className="brand-cluster"><Brand /></div></div>
     <div className="sidebar-label">My learning</div>
     <nav className="side-nav">{navItems.map(({ key, to, icon: Icon }) => <NavLink key={to} to={to} end={to === '/'} onClick={onClose} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><Icon size={18} /><span>{t(key)}</span>{key === 'Curriculum gap' && <span className="nav-badge">3</span>}</NavLink>)}</nav>
     <div className="sidebar-foot"><NavLink to="/settings" onClick={onClose} className="nav-item"><Settings size={18} /><span>{t('Settings')}</span></NavLink><NavLink to="/settings" onClick={onClose} className="help-box"><CircleHelp size={17} /><div><strong>Need support?</strong><span>Open the learning guide</span></div></NavLink></div>
@@ -115,7 +116,56 @@ function ContentCard({ icon: Icon, title, description, action, onClick, tone }) 
 function Lesson() { const [playing, setPlaying] = useState(false); const [answer, setAnswer] = useState(''); const [checked, setChecked] = useState(false); return <><div className="lesson-top"><button className="back-link" onClick={() => history.back()}><ArrowRight size={15} className="back-arrow" /> Back to learning</button><div className="lesson-tools"><button className="language-select" onClick={() => setPlaying(false)}><Languages size={16} /> Kannada <ChevronDown size={14} /></button><button className="secondary-button" onClick={() => window.print()}><Download size={16} /> PDF material</button></div></div><div className="lesson-layout"><article className="lesson-article"><div className="eyebrow">Mathematics · Bridge lesson 01</div><h1>Understanding decimal numbers</h1><p className="lesson-lede">Decimals help us describe parts of a whole in a simple, everyday way.</p><div className="audio-player"><button className="play-button" onClick={() => setPlaying(!playing)} aria-label={playing ? 'Pause lesson audio' : 'Play lesson audio'}>{playing ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}</button><div className="audio-track"><div className="audio-track-line"><span style={{ width: playing ? '42%' : '16%' }} /></div><div><span>{playing ? '0:42' : '0:18'} / 1:30</span><strong>Listen in Kannada</strong></div></div><Headphones size={19} className="muted" /></div><div className="lesson-section"><span className="section-kicker">Learning objective</span><h2>By the end of this lesson, you will understand what decimal numbers represent.</h2></div><div className="lesson-section"><span className="section-kicker">Let's explore</span><p>When we divide something into ten equal parts, each part is called one tenth. We can write one tenth as <strong>1/10</strong> or <strong>0.1</strong>.</p><div className="example-grid"><div><span>One tenth</span><strong>1/10</strong><small>= 0.1</small></div><div><span>Five tenths</span><strong>5/10</strong><small>= 0.5</small></div></div></div><div className="practice-box"><div><span className="section-kicker">Quick practice</span><h2>What is 3/10 as a decimal?</h2></div><div className="answer-options">{['0.03', '0.3', '3.0', '30'].map(item => <button key={item} className={answer === item ? 'selected' : ''} onClick={() => setAnswer(item)}><span>{['A', 'B', 'C', 'D'][['0.03', '0.3', '3.0', '30'].indexOf(item)]}</span>{item}</button>)}</div><button className="primary-button" onClick={() => setChecked(true)}><Check size={17} /> Check answer</button>{checked && <div className={`answer-feedback ${answer === '0.3' ? 'correct' : 'try-again'}`}>{answer === '0.3' ? <><CheckCircle2 size={17} /> That's right. Three tenths is 0.3.</> : <><AlertTriangle size={17} /> Almost there. Think about how many tenths make one whole.</>}</div>}</div></article><aside className="lesson-aside"><div className="lesson-progress-card"><div className="progress-ring"><strong>70</strong><span>%</span></div><span className="section-kicker">Your progress</span><h3>Keep going, Rahul.</h3><p>You've completed 2 of 3 activities in this bridge.</p><ProgressBar value={70} /></div><div className="next-up"><span className="section-kicker">Up next</span><div><span className="next-icon"><FileText size={17} /></span><span><strong>Download material</strong><small>PDF · 3 pages</small></span><Download size={16} /></div></div></aside></div></>; }
 
 function Progress() { return <><PageIntro eyebrow="A record that remembers" title="Progress" content="See how far each child has come, and what comes next." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export record</button>} /><div className="overall-progress"><div><span className="section-kicker">Rahul Shetty · Class 5</span><h2>Overall learning progress</h2><p>8 of 12 chapters completed across 4 subjects.</p></div><div className="big-progress"><strong>68<span>%</span></strong><ProgressBar value={68} color="coral" /></div></div><div className="subject-grid">{subjects.map(subject => <div className="subject-card" key={subject.name}><div className="subject-card-top"><span className={`subject-icon ${subject.color}-bg`}><BookOpen size={18} /></span><span className="subject-percentage">{subject.progress}%</span></div><h3>{subject.name}</h3><p>{subject.completed} of {subject.total} chapters completed</p><ProgressBar value={subject.progress} color={subject.color} /></div>)}</div><section className="panel record-panel"><div className="panel-heading"><div><span className="section-kicker">Persistent learning record</span><h2>What stays with Rahul</h2></div><button className="text-button" onClick={() => window.print()}>View full record <ArrowRight size={15} /></button></div><div className="record-grid"><div><span>Completed chapters</span><strong>18</strong></div><div><span>Bridged chapters</span><strong>4</strong></div><div><span>Pending gaps</span><strong className="highlight-number">2</strong></div><div><span>Last updated</span><strong>Today</strong></div></div></section></>; }
-function MigrationHistory() { return <><PageIntro eyebrow="Nothing gets lost in the move" title="Migration history" content="A continuous view of Rahul's learning journey across places and school years." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export history</button>} /><div className="history-header"><div className="history-stat"><span className="stat-icon coral"><RouteIcon size={19} /></span><div><span>Learning record</span><strong>Carried forward</strong></div></div><div className="history-route"><span>Karnataka</span><ArrowRight size={16} /><span>Maharashtra</span><ArrowRight size={16} /><span className="current-location">Current</span></div></div><div className="history-timeline">{timeline.map((item, i) => <div className={`history-item ${item.active ? 'active' : ''}`} key={item.date}><div className="history-marker"><span>{i + 1}</span></div><div className="history-card"><span className="section-kicker">{item.date}</span><h2>{item.title}</h2><p>{item.text}</p>{item.active && <Status>Current location</Status>}</div></div>)}</div></>; }
+function MigrationHistory() {
+  useEffect(() => {
+    const items = document.querySelectorAll('.history-item, .history-curve');
+    if (!('IntersectionObserver' in window)) {
+      items.forEach(item => item.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -36px 0px' });
+    items.forEach(item => {
+      observer.observe(item);
+      const bounds = item.getBoundingClientRect();
+      if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+        item.classList.add('is-visible');
+        observer.unobserve(item);
+      }
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const milestoneTypes = ['Origin state', 'Destination state', 'Learning continuity', 'Next transition'];
+  return <>
+    <PageIntro eyebrow="Nothing gets lost in the move" title="Migration history" content="A continuous view of Rahul's learning journey across places and school years." action={<button className="secondary-button" onClick={() => window.print()}><Download size={16} /> Export history</button>} />
+    <section className="history-overview" aria-label="Migration route">
+      <div className="history-overview-intro"><span className="section-kicker">Rahul's route · 2026-27</span><h2>Learning moves with him.</h2></div>
+      <div className="history-states">
+        <div className="history-state origin"><span className="history-state-label">ORIGIN</span><small>Learning started</small><h3>Karnataka</h3><p>June 2026 · Class 5</p></div>
+        <div className="history-state-connector" aria-hidden="true"><ArrowRight size={18} /></div>
+        <div className="history-state destination"><span className="history-state-label">DESTINATION</span><small>Current state</small><h3>Maharashtra</h3><p>November 2026 · Record continued</p><span className="history-current"><span /> CURRENT</span></div>
+      </div>
+      <div className="history-carry"><span className="history-carry-icon"><Check size={16} /></span><span><strong>Learning record carried forward</strong><small>12 completed chapters stay with Rahul.</small></span></div>
+    </section>
+    <section className="history-timeline" aria-label="Learning journey milestones">
+      <div className="history-timeline-heading"><span className="section-kicker">Across classrooms and school years</span><h2>Journey milestones</h2></div>
+      <div className="history-curve">
+        <svg className="history-curve-path" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M 220 110 C 390 35, 610 35, 780 110 C 970 180, 970 320, 780 390 C 610 465, 390 465, 220 390" /></svg>
+        {timeline.map((item, i) => <div className={`history-item history-item-${i + 1} ${item.active ? 'active' : ''}`} key={item.date} style={{ '--history-delay': `${i * 85}ms` }}>
+          <div className="history-marker"><span>{String(i + 1).padStart(2, '0')}</span></div>
+          <article className="history-card"><div className="history-card-meta"><span className="section-kicker">{item.date}</span><span className={`history-kind history-kind-${i + 1}`}>{milestoneTypes[i]}</span></div><h3>{item.title}</h3><p>{item.text}</p>{item.active && <Status>Current location</Status>}</article>
+        </div>)}
+      </div>
+    </section>
+  </>;
+}
 function StudentSettings() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
