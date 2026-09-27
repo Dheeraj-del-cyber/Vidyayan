@@ -63,7 +63,7 @@ export default function StudentDashboard() {
   return <div className="student-home">
     <div className="student-welcome"><div><span className="eyebrow">Your learning space · {getTodayLabel()}</span><h1>{getGreeting()}, {firstName}</h1><p>Your family may move, but your learning keeps moving with you.</p></div></div>
     <FeatureTicker />
-    <div className="add-student-row"><button className="primary-button add-student-btn" onClick={() => navigate('/add-student')}><Plus size={20} /> Add Student</button></div>
+    <div className="add-student-row"><button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add Student</button></div>
 
     {students.length > 0 && <section className="student-cards">
       {students.map(student => (
