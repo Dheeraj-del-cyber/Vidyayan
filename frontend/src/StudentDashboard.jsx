@@ -73,7 +73,7 @@ export default function StudentDashboard() {
             {student.photo ? <img src={student.photo} alt={student.name} /> : <UserRound size={20} />}
           </span>
           <div className="student-flash-info">
-            <button type="button" className="student-flash-name" onClick={() => navigate(`/students/${student.id}`)}>{student.name || 'Unnamed student'}</button>
+            <button type="button" className="student-flash-name" onClick={() => navigate(`/students/${student.id}/study-routine`, { state: student })}>{student.name || 'Unnamed student'}</button>
             <span>{student.className || ''}</span>
           </div>
           <button className="student-flash-edit" onClick={() => navigate(`/add-student/${student.id}`)}>
