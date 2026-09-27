@@ -14,10 +14,6 @@
 .student-migration-route>div{display:grid;gap:5px;min-width:0}
 .student-migration-route small{color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.7px}
 .student-migration-route strong{overflow-wrap:anywhere;color:var(--ink);font-size:14px}
-.curriculum-gap-tabs{display:flex;gap:9px;margin-bottom:22px}
-.curriculum-gap-tabs button{display:inline-flex;align-items:center;gap:8px;min-height:39px;padding:0 15px;border-radius:7px;font-size:12px;font-weight:700;background:#fff;border:1px solid var(--line);color:#65746d}
-.curriculum-gap-tabs button:hover{border-color:#b8c5bd;background:#f9fbf8}
-.curriculum-gap-tabs button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
 .student-picker{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
 .student-picker button{min-height:34px;padding:0 15px;border-radius:20px;font-size:11px;font-weight:700;background:#fff;border:1px solid var(--line);color:#65746d}
 .student-picker button:hover{border-color:#b8c5bd}

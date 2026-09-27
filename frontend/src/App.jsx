@@ -18,7 +18,6 @@ import { getStudents } from './studentsStore';
 import StudyRoutine from './StudyRoutine';
 import Profile from './Profile';
 import Progress from './Progress';
-import SyllabusLookup from './SyllabusLookup';
 import Login from './Login';
 import Register from './Register';
 import { useAuth } from './AuthContext';
@@ -112,7 +111,6 @@ function CurriculumGap() {
   const navigate = useNavigate();
   const students = getStudents();
   const [selectedId, setSelectedId] = useState(students[students.length - 1]?.id || '');
-  const [tab, setTab] = useState('students');
   const selected = students.find(s => s.id === selectedId) || students[students.length - 1];
 
   return <>
@@ -122,21 +120,15 @@ function CurriculumGap() {
       content="The same per-student analysis you see right after adding a student, always here under the menu."
       action={<button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add student</button>}
     />
-    <div className="curriculum-gap-tabs">
-      <button className={tab === 'students' ? 'active' : ''} onClick={() => setTab('students')}><Users size={15} /> Student reports</button>
-      <button className={tab === 'syllabus' ? 'active' : ''} onClick={() => setTab('syllabus')}><BookOpen size={15} /> Syllabus PDF lookup</button>
-    </div>
-    {tab === 'students' ? (
-      students.length ? <>
-        {students.length > 1 && <div className="student-picker">
-          {students.map(s => <button key={s.id} className={s.id === selected?.id ? 'active' : ''} onClick={() => setSelectedId(s.id)}>{s.name}</button>)}
-        </div>}
-        {selected && <StudentAnalysisView student={selected} />}
-      </> : <div className="curriculum-gap-empty">
-        <p>No students added yet. Add a student to see their curriculum gap analysis here.</p>
-        <button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add student</button>
-      </div>
-    ) : <SyllabusLookup />}
+    {students.length ? <>
+      {students.length > 1 && <div className="student-picker">
+        {students.map(s => <button key={s.id} className={s.id === selected?.id ? 'active' : ''} onClick={() => setSelectedId(s.id)}>{s.name}</button>)}
+      </div>}
+      {selected && <StudentAnalysisView student={selected} />}
+    </> : <div className="curriculum-gap-empty">
+      <p>No students added yet. Add a student to see their curriculum gap analysis here.</p>
+      <button className="primary-button" onClick={() => navigate('/add-student')}><Plus size={18} /> Add student</button>
+    </div>}
   </>;
 }
 function GapReport({ onOpen }) { return <div className="gap-report"><div className="report-header"><div><span className="eyebrow">Analysis for Rahul Shetty</span><h2>What needs bridging</h2></div><span className="analysis-complete"><CheckCircle2 size={16} /> Analysis complete</span></div><div className="subject-comparison"><div className="subject-heading"><span className="subject-icon coral-bg"><BookOpen size={18} /></span><div><h3>Mathematics</h3><span>5 topics compared</span></div><span className="subject-count">2 gaps</span></div><div className="curriculum-columns"><div><span className="column-label">Home curriculum · Karnataka</span>{['Numbers', 'Addition', 'Subtraction', 'Multiplication', 'Fractions'].map(x => <span className="topic complete" key={x}><Check size={15} />{x}</span>)}</div><div><span className="column-label">Destination curriculum · Maharashtra</span>{['Numbers', 'Addition', 'Subtraction', 'Multiplication'].map(x => <span className="topic complete" key={x}><Check size={15} />{x}</span>)}{['Fractions', 'Decimals', 'Basic geometry'].map(x => <span className="topic gap" key={x}><AlertTriangle size={15} />{x}</span>)}</div></div></div><div className="gap-table"><div className="gap-table-head"><span>Subject</span><span>Topic</span><span>Status</span><span>Priority</span><span /></div>{gaps.map(gap => <button className="gap-table-row" key={gap.topic} onClick={gap.status === 'Missing' ? onOpen : undefined} aria-label={`${gap.topic} ${gap.status}`}><span>{gap.subject}</span><strong>{gap.topic}</strong><span className={`gap-status ${gap.status.toLowerCase()}`}>{gap.status === 'Missing' ? <AlertTriangle size={14} /> : <Clock3 size={14} />}{gap.status}</span><span className={`priority ${gap.priority.toLowerCase()}`}>{gap.priority}</span><ArrowRight size={16} /></button>)}</div></div>; }
