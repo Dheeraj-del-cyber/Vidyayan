@@ -1,0 +1,676 @@
+/* Daily Tasks & Schedule CSS */
+
+.daily-tasks-section {
+  margin-top: 28px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(36, 50, 47, 0.05);
+}
+
+.daily-tasks-header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .daily-tasks-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.daily-tasks-title-group .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.daily-tasks-title-group h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  color: var(--ink);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.daily-tasks-title-group p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Date Tabs */
+.date-tabs-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.date-tab-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background: #f6f8f5;
+  border: 1.5px solid #e1e7e0;
+  border-radius: 12px;
+  cursor: pointer;
+  min-width: 105px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.date-tab-button:hover {
+  background: #edf2eb;
+  border-color: #cbd6c9;
+}
+
+.date-tab-button.active {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+  box-shadow: 0 4px 14px rgba(36, 50, 47, 0.2);
+}
+
+.date-tab-day {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.date-tab-date {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.date-tab-button.active .date-tab-date {
+  color: #c2d1cb;
+}
+
+.date-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: #e4ece7;
+  color: #4b5e55;
+}
+
+.date-tab-button.active .date-tab-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.date-tab-badge.badge-completed {
+  background: #e6f7f2;
+  color: var(--teal);
+}
+
+.date-tab-button.active .date-tab-badge.badge-completed {
+  background: #2a9d8f;
+  color: #ffffff;
+}
+
+/* Day Progress Tick Bar */
+.day-progress-bar-card {
+  background: linear-gradient(135deg, #f0f7f4 0%, #e6f2ee 100%);
+  border: 1px solid #d2e5dd;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.day-progress-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.day-progress-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+}
+
+.sparkle-icon {
+  color: var(--teal);
+}
+
+.completion-tick-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #10b981;
+  color: #ffffff;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.progress-count-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tick-progress-track {
+  height: 10px;
+  background: #dbe8e3;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.tick-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f9b8f 0%, #10b981 100%);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.tick-progress-fill.complete {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Tasks List */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.task-card {
+  background: #fbfcf9;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+  border-color: #cbd7cf;
+}
+
+.task-card.expanded {
+  border-color: #a4c4b8;
+  box-shadow: 0 6px 20px rgba(42, 57, 48, 0.07);
+}
+
+.task-card.task-completed-card {
+  border-color: #a7f3d0;
+  background: #f6fbf8;
+}
+
+/* Task Header */
+.task-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  cursor: pointer;
+  user-select: none;
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.task-card-header:hover {
+  background: #f8faf7;
+}
+
+.task-completed-card .task-card-header {
+  background: #f0faf5;
+}
+
+.task-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.task-subject-tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-subject-tag.tone-coral {
+  background: var(--coral-soft);
+  color: var(--coral);
+}
+
+.task-subject-tag.tone-teal {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.task-subject-tag.tone-blue {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.task-subject-tag.tone-yellow {
+  background: var(--yellow-soft);
+  color: #b88c26;
+}
+
+.task-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.task-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.task-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.task-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.task-subtasks-indicator {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: #edf1ed;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* Completion Tick Bar Badge */
+.task-completed-bar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
+  animation: tickPop 0.3s ease-out;
+}
+
+@keyframes tickPop {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.task-expand-btn {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.task-expand-btn:hover {
+  background: #eef2ec;
+  color: var(--ink);
+}
+
+/* Task Body */
+.task-card-body {
+  padding: 22px;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.task-description {
+  margin: 0 0 20px 0;
+  color: #596a61;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Subtasks Grid */
+.subtasks-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .subtasks-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.subtask-box {
+  background: #fbfcf9;
+  border: 1px solid #e2e8e1;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all 0.2s ease;
+}
+
+.subtask-box.subtask-done {
+  border-color: #a7f3d0;
+  background: #f3faf6;
+}
+
+.subtask-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.subtask-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.subtask-title h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.subtask-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.subtask-badge.video-badge {
+  background: var(--coral-soft);
+  color: var(--coral);
+}
+
+.subtask-badge.quiz-badge {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.subtask-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.quiz-done-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.subtask-summary {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* YouTube Video Embed */
+.youtube-embed-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.youtube-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Subtask Action Buttons */
+.subtask-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.subtask-complete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #f0f4f1;
+  border: 1px solid #ced8d2;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.subtask-complete-btn:hover:not(:disabled) {
+  background: #e2ede6;
+  border-color: #b2c4ba;
+}
+
+.subtask-complete-btn.primary {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+}
+
+.subtask-complete-btn.primary:hover:not(:disabled) {
+  background: #344843;
+}
+
+.subtask-complete-btn.done {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.2);
+}
+
+.subtask-complete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Quiz Content */
+.quiz-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.quiz-question {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-option-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #dce4dd;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.quiz-option-item:hover {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+
+.quiz-option-item.selected {
+  border-color: var(--coral);
+  background: var(--coral-soft);
+  box-shadow: 0 2px 8px rgba(232, 117, 93, 0.15);
+}
+
+.quiz-option-item.correct-ans {
+  border-color: #10b981 !important;
+  background: #ecfdf5 !important;
+  color: #065f46;
+}
+
+.quiz-option-item.wrong-ans {
+  border-color: #ef4444 !important;
+  background: #fef2f2 !important;
+  color: #991b1b;
+}
+
+.option-bullet {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #eef2ec;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-none: initial;
+}
+
+.quiz-option-item.selected .option-bullet {
+  background: var(--coral);
+  color: #ffffff;
+}
+
+.quiz-option-item.correct-ans .option-bullet {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.quiz-option-item.wrong-ans .option-bullet {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.option-text {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+/* Quiz Feedback Box */
+.quiz-feedback-box {
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.quiz-feedback-box.correct {
+  background: #d1fae5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.quiz-feedback-box.incorrect {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.quiz-feedback-box strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.quiz-feedback-box p {
+  margin: 0;
+}
+
+/* Task Congrats Banner */
+.task-congrats-banner {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-radius: 12px;
+  color: #065f46;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+}
+
+.task-congrats-banner strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.task-congrats-banner p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}

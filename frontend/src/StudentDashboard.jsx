@@ -4,6 +4,7 @@ import './student-details.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { getStudents } from './studentsStore';
+import DailyTasks from './DailyTasks';
 
 // Good morning / afternoon / evening / night, based on the time right now.
 function getGreeting() {
@@ -81,5 +82,7 @@ export default function StudentDashboard() {
         </div>
       ))}
     </section>}
+
+    <DailyTasks />
   </div>;
 }

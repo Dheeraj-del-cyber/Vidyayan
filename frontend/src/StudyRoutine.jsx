@@ -2,6 +2,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { gaps } from './data';
 import { getStudent } from './studentsStore';
+import DailyTasks from './DailyTasks';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -11,16 +12,9 @@ export default function StudyRoutine() {
   const { studentId } = useParams();
   const student = (studentId && getStudent(studentId)) || state;
   const name = student?.name;
-  // Study hours come only from what was actually entered against the
-  // child's daily routine timetable on the Add student page. A day with
-  // no entry stays blank here - it is never filled in with a guessed or
-  // default number.
+
   const dailyStudyHours = student?.dailyStudyHours || {};
 
-  // Topics come from the real identified gaps (data.js `gaps`), two per
-  // day, taken in order. Once the gap list runs out, remaining topic
-  // cells for later days are left blank rather than inventing more
-  // topics that were never part of the gap analysis.
   const rows = weekdays.map((day, i) => ({
     day,
     hours: dailyStudyHours[day] || '',
@@ -45,5 +39,7 @@ export default function StudyRoutine() {
         </div>
       ))}
     </div>
+
+    <DailyTasks />
   </>;
 }
