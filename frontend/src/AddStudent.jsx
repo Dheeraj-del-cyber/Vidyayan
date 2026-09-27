@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Camera, Check, FileText, Image, Trash2, UserRound, X } from 'lucide-react';
+import { Camera, Check, FileText, Image, Sparkles, Trash2, UserRound, X } from 'lucide-react';
 import { indianStates } from './indianStates';
 import { deleteStudent, getStudent, makeStudentId, saveStudent } from './studentsStore';
 
@@ -70,6 +70,18 @@ export default function AddStudent() {
     setTimetable({ name: file.name, isPdf: file.type === 'application/pdf' });
   };
 
+  const fillDemoData = () => {
+    setName('Demo Student');
+    setClassName('Class 8');
+    setAge('13');
+    setPreviousState('Bihar');
+    setCurrentState('Karnataka');
+    setMigratedMonth('2025-06');
+    setPhoto(null);
+    setTimetable(null);
+    setStudyHours({ Monday: '2', Tuesday: '1.5', Wednesday: '2', Thursday: '1', Friday: '2', Saturday: '3', Sunday: '2' });
+  };
+
   const handleSubmit = event => {
     event.preventDefault();
     // No backend endpoint exists yet to persist a new student record or to
@@ -109,6 +121,10 @@ export default function AddStudent() {
 
     <form className="form-layout" onSubmit={handleSubmit}>
       <div className="form-card">
+        {!isEditing && <div className="demo-data-action">
+          <button type="button" className="secondary-button" onClick={fillDemoData}><Sparkles size={16} /> Fill demo data</button>
+        </div>}
+
         <section className="form-section">
           <div className="form-section-heading"><span className="form-section-icon"><UserRound size={17} /></span><h2>Photo &amp; basic details</h2></div>
 
