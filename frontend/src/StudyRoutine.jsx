@@ -8,15 +8,12 @@ import DailyTasks from './DailyTasks';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-const demoRoutine = {
-  Monday: { hours: '1.5 hrs', topic1: 'Math · Fractions', topic2: 'Science · Plant growth' },
-  Tuesday: { hours: '2 hrs', topic1: 'English · Reading comprehension', topic2: 'Social Studies · Local governance' },
-  Wednesday: { hours: '1.5 hrs', topic1: 'Math · Decimals', topic2: 'Hindi · Grammar practice' },
-  Thursday: { hours: '2 hrs', topic1: 'Science · Force and motion', topic2: 'Computer · Typing basics' },
-  Friday: { hours: '1.5 hrs', topic1: 'English · Writing skills', topic2: 'Math · Word problems' },
-  Saturday: { hours: '2.5 hrs', topic1: 'Science · Earth and sky', topic2: 'Art · Drawing exercises' },
-  Sunday: { hours: '1 hr', topic1: 'Revision · Weekly recap', topic2: 'Learning · Reading time' },
-};
+function formatHours(value) {
+  if (value === undefined || value === null || value === '') return 'No time logged';
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0) return 'No time logged';
+  return `${numeric} hrs`;
+}
 
 export default function StudyRoutine() {
   const { state } = useLocation();
@@ -50,16 +47,15 @@ export default function StudyRoutine() {
   };
 
   const rows = weekdays.map((day, i) => {
-    const saved = dailyStudyHours[day];
-    const fallback = demoRoutine[day];
+    const savedHours = dailyStudyHours[day];
     const topic1 = gaps[i * 2];
     const topic2 = gaps[i * 2 + 1];
 
     return {
       day,
-      hours: saved || fallback.hours,
-      topic1: saved ? (topic1 ? `${topic1.subject} · ${topic1.topic}` : '') : (fallback.topic1 || ''),
-      topic2: saved ? (topic2 ? `${topic2.subject} · ${topic2.topic}` : '') : (fallback.topic2 || ''),
+      hours: formatHours(savedHours),
+      topic1: topic1 ? `${topic1.subject} · ${topic1.topic}` : 'Needs topic review',
+      topic2: topic2 ? `${topic2.subject} · ${topic2.topic}` : 'Needs topic review',
     };
   });
 
@@ -86,9 +82,9 @@ export default function StudyRoutine() {
           {rows.map(row => (
             <tr className="routine-table-row" key={row.day}>
               <td className="routine-day-name">{row.day}</td>
-              <td><span className="routine-pill routine-hours">{row.hours || '1 hr review'}</span></td>
-              <td><span className="routine-pill routine-topic">{row.topic1 || 'Reading practice'}</span></td>
-              <td><span className="routine-pill routine-topic alt">{row.topic2 || 'Practice session'}</span></td>
+              <td><span className="routine-pill routine-hours">{row.hours}</span></td>
+              <td><span className="routine-pill routine-topic">{row.topic1}</span></td>
+              <td><span className="routine-pill routine-topic alt">{row.topic2}</span></td>
             </tr>
           ))}
         </tbody>
