@@ -11,8 +11,8 @@
 .student-flash-info span{font-size:11px;color:var(--muted)}
 .student-flash-actions{display:flex;align-items:center;gap:6px;flex:none}
 .student-flash-edit{display:flex;align-items:center;gap:5px;flex:none;padding:7px 11px;font-size:11px;font-weight:700;color:var(--coral);background:var(--coral-soft);border-radius:20px}
-.student-flash-delete{display:flex;align-items:center;gap:4px;padding:7px 11px;font-size:11px;font-weight:700;color:#dc2626;background:#fef2f2;border-radius:20px;transition:background 0.15s ease}
-.student-flash-delete:hover{background:#fee2e2}
+.student-flash-delete{display:grid;place-items:center;width:28px;height:28px;padding:0;color:#dc2626;background:#fef2f2;border-radius:50%;transition:background 0.15s ease,transform 0.15s ease}
+.student-flash-delete:hover{background:#fee2e2;color:#b91c1c;transform:scale(1.05)}
 .danger-button{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 16px;border-radius:7px;font-size:12px;font-weight:700;background:#dc2626;color:#ffffff;transition:background 0.15s ease}
 .danger-button:hover{background:#b91c1c}
 .field-hint{font-size:11px;color:var(--muted);margin:-8px 0 14px;line-height:1.5}

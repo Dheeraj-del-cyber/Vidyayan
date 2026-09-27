@@ -88,8 +88,8 @@ export default function StudentDashboard() {
             <button className="student-flash-edit" onClick={() => navigate(`/add-student/${student.id}`)}>
               <Pencil size={14} /> Edit
             </button>
-            <button className="student-flash-delete" onClick={(e) => handleDeleteStudent(e, student.id, student.name)}>
-              <Trash2 size={14} /> Delete
+            <button className="student-flash-delete" onClick={(e) => handleDeleteStudent(e, student.id, student.name)} title="Delete student" aria-label="Delete student">
+              <Trash2 size={15} />
             </button>
           </div>
         </div>
