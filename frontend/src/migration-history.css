@@ -16,16 +16,21 @@
 .history-carry strong,.history-carry small{display:block}
 .history-carry strong{font-size:10px}
 .history-carry small{margin-top:4px;color:var(--muted);font-size:9px;line-height:1.4}
-.history-timeline{max-width:780px;margin:0 auto}
-.history-timeline{max-width:1020px}
+section.history-timeline{max-width:1020px;margin:0 auto}
 .history-timeline-heading{margin:0 0 23px 28px}
 .history-timeline-heading .section-kicker{display:block}
-.history-curve{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(170px,auto));gap:55px 100px;padding:0 28px}
+.history-curve{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(170px,auto));gap:55px 100px;padding:20px 28px 0}
 .history-curve-path{position:absolute;z-index:-1;inset:0;width:100%;height:100%;overflow:visible}
 .history-curve-path path{fill:none;stroke:#b9d7c9;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
 .history-curve.is-visible .history-curve-path path{animation:history-route-draw 1.15s cubic-bezier(.2,.75,.25,1) both}
-.history-item{position:relative;z-index:1;display:grid;grid-template-columns:42px minmax(0,1fr);align-self:start;gap:12px;width:100%;max-width:410px;opacity:1;transform:none}
-.history-item:not(:last-child):before{display:none}
+/* Note: index.css defines its own bare .history-item/.history-marker/.history-card
+   rules (a leftover from an older, plain vertical-list version of this page) and
+   its stylesheet is bundled after this one, so with equal specificity those old
+   rules were silently winning over the ones below. Everything that conflicts
+   with index.css is scoped under .history-curve so it always wins regardless of
+   file order, without needing !important. */
+.history-curve .history-item{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr);align-self:start;width:100%;max-width:410px;opacity:1;transform:none}
+.history-curve .history-item:not(:last-child):before{display:none}
 .history-item.is-visible{animation:history-card-reveal .65s cubic-bezier(.2,.75,.25,1) var(--history-delay,0ms) both}
 @keyframes history-card-reveal{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes history-route-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
@@ -34,10 +39,12 @@
 .history-item-3{grid-column:2;grid-row:2;justify-self:end}
 .history-item-4{grid-column:1;grid-row:2;justify-self:start}
 .history-item.is-visible{opacity:1;transform:translateY(0)}
-.history-marker{transition:background-color .35s ease,color .35s ease,box-shadow .35s ease}
+.history-curve .history-marker{position:absolute;top:-16px;z-index:2;transition:background-color .35s ease,color .35s ease,box-shadow .35s ease}
+.history-item-1 .history-marker,.history-item-4 .history-marker{left:-16px}
+.history-item-2 .history-marker,.history-item-3 .history-marker{right:-16px}
 .history-item.is-visible .history-marker{box-shadow:0 0 0 3px rgba(83,160,133,.12)}
 .history-item.active.is-visible .history-marker{box-shadow:0 0 0 4px rgba(232,117,93,.16)}
-.history-card{padding:16px 18px 17px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 18px rgba(42,57,48,.035)}
+.history-curve .history-card{padding:20px 22px 21px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 18px rgba(42,57,48,.035)}
 .history-item.active .history-card{border-color:#efc5b9;box-shadow:0 7px 22px rgba(190,102,79,.08)}
 .history-card-meta{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .history-kind{flex:none;padding:5px 8px;color:#537468;background:#edf4ef;border-radius:4px;font-size:9px;font-weight:700}
@@ -45,7 +52,7 @@
 .history-kind-3{color:#94733b;background:#f7f1df}
 .history-kind-4{color:#547390;background:#edf2f6}
 .history-card h3{margin:8px 0 4px;font-family:Fraunces,serif;font-size:19px;line-height:1.2}
-.history-card p{margin:0 0 10px;color:var(--muted);font-size:11px;line-height:1.55}
-@media(max-width:900px){.history-overview{grid-template-columns:1fr 1.5fr;gap:18px}.history-carry{grid-column:1/-1}.history-curve{column-gap:42px;padding:0 12px}}
-@media(max-width:700px){.history-overview{grid-template-columns:1fr;gap:19px;padding:19px 0;margin-bottom:29px}.history-overview-intro h2{font-size:20px}.history-states{grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);gap:7px}.history-state{padding-left:10px}.history-state h3{font-size:18px}.history-state p{font-size:9px}.history-state-connector{width:29px;height:29px}.history-timeline-heading{margin:0 0 16px}.history-timeline-heading h2{font-size:20px}.history-curve{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:none;gap:15px;padding:0}.history-curve-path{display:none}.history-item,.history-item-1,.history-item-2,.history-item-3,.history-item-4{grid-column:1;grid-row:auto;grid-template-columns:38px minmax(0,1fr);gap:12px;max-width:none}.history-item:not(:last-child):before{display:block;content:'';position:absolute;left:18px;top:37px;bottom:-16px;border-left:1px dashed #c7d7cc;transform:scaleY(0);transform-origin:top;transition:transform .7s ease calc(var(--history-delay,0ms) + 120ms)}.history-item.is-visible:not(:last-child):before{transform:scaleY(1)}.history-marker{width:37px;height:37px;border-width:5px}.history-card{padding:13px}.history-card-meta{align-items:flex-start;flex-direction:column;gap:6px}.history-card h3{font-size:17px}.history-card p{font-size:10px}}
+.history-curve .history-card p{margin:0 0 10px;color:var(--muted);font-size:11px;line-height:1.55}
+@media(max-width:900px){.history-overview{grid-template-columns:1fr 1.5fr;gap:18px}.history-carry{grid-column:1/-1}.history-curve{column-gap:42px;padding:20px 12px 0}}
+@media(max-width:700px){.history-overview{grid-template-columns:1fr;gap:19px;padding:19px 0;margin-bottom:29px}.history-overview-intro h2{font-size:20px}.history-states{grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);gap:7px}.history-state{padding-left:10px}.history-state h3{font-size:18px}.history-state p{font-size:9px}.history-state-connector{width:29px;height:29px}.history-timeline-heading{margin:0 0 16px}.history-timeline-heading h2{font-size:20px}.history-curve{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:none;gap:15px;padding:0}.history-curve-path{display:none}.history-curve .history-item,.history-item-1,.history-item-2,.history-item-3,.history-item-4{grid-column:1;grid-row:auto;grid-template-columns:38px minmax(0,1fr);gap:12px;max-width:none}.history-curve .history-item:not(:last-child):before{display:block;content:'';position:absolute;left:18px;top:37px;bottom:-16px;border-left:1px dashed #c7d7cc;transform:scaleY(0);transform-origin:top;transition:transform .7s ease calc(var(--history-delay,0ms) + 120ms)}.history-item.is-visible:not(:last-child):before{transform:scaleY(1)}.history-curve .history-marker{position:relative;top:auto;left:auto;right:auto;width:37px;height:37px;border-width:5px}.history-curve .history-card{padding:13px}.history-card-meta{align-items:flex-start;flex-direction:column;gap:6px}.history-card h3{font-size:17px}.history-curve .history-card p{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.history-item,.history-item:not(:last-child):before{opacity:1;transform:none;animation:none;transition:none}.history-curve-path path{stroke-dashoffset:0;animation:none}}
